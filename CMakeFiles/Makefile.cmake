@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
   "CMake/Modules/CheckCompilerToolchain.cmake"
+  "CMake/Modules/CheckUrho3DLibrary.cpp"
   "CMake/Modules/FindUrho3D.cmake"
   "CMake/Modules/GenerateExportHeader.cmake"
   "CMake/Modules/Urho3D-CMake-common.cmake"
