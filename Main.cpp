@@ -28,7 +28,8 @@
 #include <Urho3D/Graphics/Material.h>
 #include <Urho3D/Graphics/Skybox.h>
 
-#include "PDInstance.cpp"
+// #include "PDInstance.cpp"
+#include <PdBase.hpp>
 
 using namespace Urho3D;
 
@@ -39,12 +40,14 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
+    pd::PdBase pd;
 
     ListenerApp(Context * context) : Application(context) { }
 
     virtual void Setup()
     {
         engineParameters_["FullScreen"] = false;
+
         engineParameters_["WindowWidth"] = 1280;
         engineParameters_["WindowHeight"] = 720;
         engineParameters_["WindowResizable"] = true;

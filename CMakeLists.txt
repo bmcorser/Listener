@@ -43,3 +43,8 @@ endif ()
 if (URHO3D_LUA)
     setup_test (NAME ExternalLibLua OPTIONS LuaScripts/12_PhysicsStressTest.lua -w)
 endif ()
+
+include(ExternalProject)
+ExternalProject_Add(libpd GIT_REPOSITORY https://github.com/libpd/libpd.git GIT_SUBMODULES GIT_TAG 0.8.3 BUILD_IN_SOURCE 1 BUILD_COMMAND make CONFIGURE_COMMAND echo)
+target_include_directories(Main PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libpd-prefix/src/libpd)
+target_link_libraries(Main libPdBase.a)
