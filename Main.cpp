@@ -28,6 +28,8 @@
 #include <Urho3D/Graphics/Material.h>
 #include <Urho3D/Graphics/Skybox.h>
 
+#include "PDInstance.cpp"
+
 using namespace Urho3D;
 
 class ListenerApp : public Application
