@@ -28,6 +28,10 @@
 #include <Urho3D/Graphics/Material.h>
 #include <Urho3D/Graphics/Skybox.h>
 
+// #include "AnalogQuat.cpp"
+
+float EPSILON = std::numeric_limits<float>::epsilon();
+
 using namespace Urho3D;
 /**
 * Using the convenient Application API we don't have
@@ -96,13 +100,20 @@ public:
         // Set the environment variables URHO3D_HOME, URHO3D_PREFIX_PATH or
         // change the engine parameter "ResourcePrefixPath" in the Setup method.
         /*
-        x_text_->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"),20);
-        text_->SetColor(Color(.3,0,.3));
-        text_->SetHorizontalAlignment(HA_CENTER);
-        text_->SetVerticalAlignment(VA_TOP);
         */
+
+        x_text_->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"),20);
+        x_text_->SetColor(Color(.3,0,.3));
+        x_text_->SetHorizontalAlignment(HA_LEFT);
+        x_text_->SetVerticalAlignment(VA_TOP);
         GetSubsystem<UI>()->GetRoot()->AddChild(x_text_);
+
+        y_text_->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"),20);
+        y_text_->SetColor(Color(.3,0,.3));
+        y_text_->SetHorizontalAlignment(HA_RIGHT);
+        y_text_->SetVerticalAlignment(VA_TOP);
         GetSubsystem<UI>()->GetRoot()->AddChild(y_text_);
+
         // Add a button, just as an interactive UI sample.
         Button* button=new Button(context_);
         // Note, must be part of the UI system before SetSize calls!
@@ -131,10 +142,10 @@ public:
         skybox->SetMaterial(cache->GetResource<Material>("Materials/Skybox.xml"));
 
         // Let's put a box in there.
-        boxNode_=scene_->CreateChild("Box");
+        boxNode_ = scene_->CreateChild("Box");
         boxNode_->SetPosition(Vector3(0,2,15));
         boxNode_->SetScale(Vector3(3,3,3));
-        StaticModel* boxObject=boxNode_->CreateComponent<StaticModel>();
+        StaticModel* boxObject = boxNode_->CreateComponent<StaticModel>();
         boxObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
         boxObject->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
         boxObject->SetCastShadows(true);
@@ -238,14 +249,13 @@ public:
         Quaternion newQ;
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
             x_text_->SetText(String(pos));
-            newQ = Quaternion(boxQ.w_, pos, boxQ.y_, boxQ.z_);
+            newQ = Quaternion(boxQ.w_, boxQ.x_, - pos, boxQ.z_);
+            boxNode_->SetWorldRotation(newQ);
         }
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
             y_text_->SetText(String(pos));
-            newQ = Quaternion(boxQ.w_, boxQ.x_, pos, boxQ.z_);
-        }
-        if (Abs(pos) > 0.01) {
-            boxNode_->SetRotation(newQ);
+            newQ = Quaternion(boxQ.w_, - pos, boxQ.y_, boxQ.z_);
+            boxNode_->SetWorldRotation(newQ);
         }
     }
 
