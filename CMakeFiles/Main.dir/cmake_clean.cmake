@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Main.dir/Urho3DPlayer.cpp.o"
+  "CMakeFiles/Main.dir/Main.cpp.o"
   "bin/Main.pdb"
   "bin/Main"
 )

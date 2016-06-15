@@ -57,38 +57,38 @@ include CMakeFiles/Main.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/Main.dir/flags.make
 
-CMakeFiles/Main.dir/Urho3DPlayer.cpp.o: CMakeFiles/Main.dir/flags.make
-CMakeFiles/Main.dir/Urho3DPlayer.cpp.o: Urho3DPlayer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/ben/work/games/Listener/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Main.dir/Urho3DPlayer.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Main.dir/Urho3DPlayer.cpp.o -c /Users/ben/work/games/Listener/Urho3DPlayer.cpp
+CMakeFiles/Main.dir/Main.cpp.o: CMakeFiles/Main.dir/flags.make
+CMakeFiles/Main.dir/Main.cpp.o: Main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/ben/work/games/Listener/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Main.dir/Main.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Main.dir/Main.cpp.o -c /Users/ben/work/games/Listener/Main.cpp
 
-CMakeFiles/Main.dir/Urho3DPlayer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Main.dir/Urho3DPlayer.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/ben/work/games/Listener/Urho3DPlayer.cpp > CMakeFiles/Main.dir/Urho3DPlayer.cpp.i
+CMakeFiles/Main.dir/Main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Main.dir/Main.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/ben/work/games/Listener/Main.cpp > CMakeFiles/Main.dir/Main.cpp.i
 
-CMakeFiles/Main.dir/Urho3DPlayer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Main.dir/Urho3DPlayer.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/ben/work/games/Listener/Urho3DPlayer.cpp -o CMakeFiles/Main.dir/Urho3DPlayer.cpp.s
+CMakeFiles/Main.dir/Main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Main.dir/Main.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/ben/work/games/Listener/Main.cpp -o CMakeFiles/Main.dir/Main.cpp.s
 
-CMakeFiles/Main.dir/Urho3DPlayer.cpp.o.requires:
+CMakeFiles/Main.dir/Main.cpp.o.requires:
 
-.PHONY : CMakeFiles/Main.dir/Urho3DPlayer.cpp.o.requires
+.PHONY : CMakeFiles/Main.dir/Main.cpp.o.requires
 
-CMakeFiles/Main.dir/Urho3DPlayer.cpp.o.provides: CMakeFiles/Main.dir/Urho3DPlayer.cpp.o.requires
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Urho3DPlayer.cpp.o.provides.build
-.PHONY : CMakeFiles/Main.dir/Urho3DPlayer.cpp.o.provides
+CMakeFiles/Main.dir/Main.cpp.o.provides: CMakeFiles/Main.dir/Main.cpp.o.requires
+	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Main.cpp.o.provides.build
+.PHONY : CMakeFiles/Main.dir/Main.cpp.o.provides
 
-CMakeFiles/Main.dir/Urho3DPlayer.cpp.o.provides.build: CMakeFiles/Main.dir/Urho3DPlayer.cpp.o
+CMakeFiles/Main.dir/Main.cpp.o.provides.build: CMakeFiles/Main.dir/Main.cpp.o
 
 
 # Object files for target Main
 Main_OBJECTS = \
-"CMakeFiles/Main.dir/Urho3DPlayer.cpp.o"
+"CMakeFiles/Main.dir/Main.cpp.o"
 
 # External object files for target Main
 Main_EXTERNAL_OBJECTS =
 
-bin/Main: CMakeFiles/Main.dir/Urho3DPlayer.cpp.o
+bin/Main: CMakeFiles/Main.dir/Main.cpp.o
 bin/Main: CMakeFiles/Main.dir/build.make
 bin/Main: /Users/ben/work/games/src/Urho3D-generic/build/lib/libUrho3D.a
 bin/Main: CMakeFiles/Main.dir/link.txt
@@ -100,7 +100,7 @@ CMakeFiles/Main.dir/build: bin/Main
 
 .PHONY : CMakeFiles/Main.dir/build
 
-CMakeFiles/Main.dir/requires: CMakeFiles/Main.dir/Urho3DPlayer.cpp.o.requires
+CMakeFiles/Main.dir/requires: CMakeFiles/Main.dir/Main.cpp.o.requires
 
 .PHONY : CMakeFiles/Main.dir/requires
 

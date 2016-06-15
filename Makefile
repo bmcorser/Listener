@@ -78,6 +78,17 @@ install/local/fast: install/local
 
 .PHONY : install/local/fast
 
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/local/Cellar/cmake/3.5.2/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
 # Special rule for the target list_install_components
 list_install_components:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
@@ -100,16 +111,16 @@ install/fast: preinstall/fast
 	/usr/local/Cellar/cmake/3.5.2/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/local/Cellar/cmake/3.5.2/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : edit_cache
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/local/Cellar/cmake/3.5.2/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
 
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
+# Special rule for the target install/strip
+install/strip/fast: install/strip
 
-.PHONY : edit_cache/fast
+.PHONY : install/strip/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -167,32 +178,32 @@ Main/fast:
 	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/build
 .PHONY : Main/fast
 
-Urho3DPlayer.o: Urho3DPlayer.cpp.o
+Main.o: Main.cpp.o
 
-.PHONY : Urho3DPlayer.o
+.PHONY : Main.o
 
 # target to build an object file
-Urho3DPlayer.cpp.o:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Urho3DPlayer.cpp.o
-.PHONY : Urho3DPlayer.cpp.o
+Main.cpp.o:
+	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Main.cpp.o
+.PHONY : Main.cpp.o
 
-Urho3DPlayer.i: Urho3DPlayer.cpp.i
+Main.i: Main.cpp.i
 
-.PHONY : Urho3DPlayer.i
+.PHONY : Main.i
 
 # target to preprocess a source file
-Urho3DPlayer.cpp.i:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Urho3DPlayer.cpp.i
-.PHONY : Urho3DPlayer.cpp.i
+Main.cpp.i:
+	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Main.cpp.i
+.PHONY : Main.cpp.i
 
-Urho3DPlayer.s: Urho3DPlayer.cpp.s
+Main.s: Main.cpp.s
 
-.PHONY : Urho3DPlayer.s
+.PHONY : Main.s
 
 # target to generate assembly for a file
-Urho3DPlayer.cpp.s:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Urho3DPlayer.cpp.s
-.PHONY : Urho3DPlayer.cpp.s
+Main.cpp.s:
+	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Main.cpp.s
+.PHONY : Main.cpp.s
 
 # Help Target
 help:
@@ -202,14 +213,15 @@ help:
 	@echo "... depend"
 	@echo "... test"
 	@echo "... install/local"
+	@echo "... edit_cache"
 	@echo "... list_install_components"
 	@echo "... install"
-	@echo "... edit_cache"
+	@echo "... install/strip"
 	@echo "... rebuild_cache"
 	@echo "... Main"
-	@echo "... Urho3DPlayer.o"
-	@echo "... Urho3DPlayer.i"
-	@echo "... Urho3DPlayer.s"
+	@echo "... Main.o"
+	@echo "... Main.i"
+	@echo "... Main.s"
 .PHONY : help
 
 
