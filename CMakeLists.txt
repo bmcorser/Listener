@@ -44,7 +44,29 @@ if (URHO3D_LUA)
     setup_test (NAME ExternalLibLua OPTIONS LuaScripts/12_PhysicsStressTest.lua -w)
 endif ()
 
+set(LIBPD_ROOT ${CMAKE_BINARY_DIR}/thirdparty/libpd)
+set(LIBPD_LIB_DIR ${LIBPD_ROOT}/bin/lib)
+set(LIBPD_INCLUDE_DIR ${LIBPD_ROOT}/bin/include)
+
 include(ExternalProject)
-ExternalProject_Add(libpd GIT_REPOSITORY https://github.com/libpd/libpd.git GIT_SUBMODULES GIT_TAG 0.8.3 BUILD_IN_SOURCE 1 BUILD_COMMAND make CONFIGURE_COMMAND echo)
-target_include_directories(Main PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libpd-prefix/src/libpd)
-target_link_libraries(Main libPdBase.a)
+ExternalProject_Add(
+    libpd_external
+    PREFIX ${LIBPD_ROOT}
+    GIT_REPOSITORY https://github.com/libpd/libpd.git
+    GIT_SUBMODULES
+    GIT_TAG 0.8.3
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+    BINARY_DIR ${LIBPD_ROOT}/src/libpd
+    SOURCE_DIR ${LIBPD_ROOT}/src/libpd
+    INSTALL_DIR ${LIBPD_ROOT}/bin
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND make
+    BUILD_BYPRODUCTS ${LIBPD_LIB_DIR}/libpd.a
+)
+add_library(libpd STATIC IMPORTED)
+set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_LIB_DIR}/libpd.a)
+add_dependencies(libpd hidapi_external)
+
+include_directories(${LIBPD_INCLUDE_DIR})
+target_link_libraries(Main libpd)

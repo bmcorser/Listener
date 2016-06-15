@@ -166,17 +166,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named libpd
+# Target rules for targets named libpd_external
 
 # Build rule for target.
-libpd: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 libpd
-.PHONY : libpd
+libpd_external: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 libpd_external
+.PHONY : libpd_external
 
 # fast build rule for target.
-libpd/fast:
-	$(MAKE) -f CMakeFiles/libpd.dir/build.make CMakeFiles/libpd.dir/build
-.PHONY : libpd/fast
+libpd_external/fast:
+	$(MAKE) -f CMakeFiles/libpd_external.dir/build.make CMakeFiles/libpd_external.dir/build
+.PHONY : libpd_external/fast
 
 #=============================================================================
 # Target rules for targets named Main
@@ -228,10 +228,10 @@ help:
 	@echo "... install/local"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... libpd"
 	@echo "... list_install_components"
 	@echo "... install"
 	@echo "... install/strip"
+	@echo "... libpd_external"
 	@echo "... Main"
 	@echo "... Main.o"
 	@echo "... Main.i"
