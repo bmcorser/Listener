@@ -40,7 +40,8 @@ class MyApp : public Application
 public:
     int framecount_;
     float time_;
-    SharedPtr<Text> text_;
+    SharedPtr<Text> x_text_;
+    SharedPtr<Text> y_text_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> boxNode_;
     SharedPtr<Node> cameraNode_;
@@ -88,17 +89,20 @@ public:
         // Let's use the default style that comes with Urho3D.
         GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(cache->GetResource<XMLFile>("UI/DefaultStyle.xml"));
         // Let's create some text to display.
-        text_=new Text(context_);
-        // Text will be updated later in the E_UPDATE handler. Keep readin'.
-        text_->SetText("Keys: tab = toggle mouse, AWSD = move camera, Shift = fast mode, Esc = quit.\nWait a bit to see FPS.");
+        x_text_ = new Text(context_);
+        y_text_ = new Text(context_);
+
         // If the engine cannot find the font, it comes with Urho3D.
         // Set the environment variables URHO3D_HOME, URHO3D_PREFIX_PATH or
         // change the engine parameter "ResourcePrefixPath" in the Setup method.
-        text_->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"),20);
+        /*
+        x_text_->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"),20);
         text_->SetColor(Color(.3,0,.3));
         text_->SetHorizontalAlignment(HA_CENTER);
         text_->SetVerticalAlignment(VA_TOP);
-        GetSubsystem<UI>()->GetRoot()->AddChild(text_);
+        */
+        GetSubsystem<UI>()->GetRoot()->AddChild(x_text_);
+        GetSubsystem<UI>()->GetRoot()->AddChild(y_text_);
         // Add a button, just as an interactive UI sample.
         Button* button=new Button(context_);
         // Note, must be part of the UI system before SetSize calls!
@@ -207,6 +211,8 @@ public:
         SubscribeToEvent(E_RENDERUPDATE,URHO3D_HANDLER(MyApp,HandleRenderUpdate));
         SubscribeToEvent(E_POSTRENDERUPDATE,URHO3D_HANDLER(MyApp,HandlePostRenderUpdate));
         SubscribeToEvent(E_ENDFRAME,URHO3D_HANDLER(MyApp,HandleEndFrame));
+        SubscribeToEvent(E_ENDFRAME,URHO3D_HANDLER(MyApp,HandleEndFrame));
+        SubscribeToEvent(E_JOYSTICKAXISMOVE,URHO3D_HANDLER(MyApp,HandleJoystickAxis));
     }
 
     /**
@@ -217,6 +223,30 @@ public:
     */
     virtual void Stop()
     {
+    }
+
+    /**
+    * Input from keyboard is handled here. I'm assuming that Input, if
+    * available, will be handled before E_UPDATE.
+    */
+    void HandleJoystickAxis(StringHash eventType,VariantMap& eventData)
+    {
+        using namespace JoystickAxisMove;
+
+        float pos = eventData[P_POSITION].GetFloat();
+        Quaternion boxQ = boxNode_->GetRotation();
+        Quaternion newQ;
+        if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
+            x_text_->SetText(String(pos));
+            newQ = Quaternion(boxQ.w_, pos, boxQ.y_, boxQ.z_);
+        }
+        if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
+            y_text_->SetText(String(pos));
+            newQ = Quaternion(boxQ.w_, boxQ.x_, pos, boxQ.z_);
+        }
+        if (Abs(pos) > 0.01) {
+            boxNode_->SetRotation(newQ);
+        }
     }
 
     /**
@@ -267,6 +297,7 @@ public:
         // Mouse sensitivity as degrees per pixel
         const float MOUSE_SENSITIVITY=0.1f;
 
+        /*
         if(time_ >=1)
         {
             std::string str;
@@ -294,17 +325,17 @@ public:
             str.append(" fps");
             String s(str.c_str(),str.size());
             text_->SetText(s);
-            URHO3D_LOGINFO(s);     // this show how to put stuff into the log
+            // URHO3D_LOGINFO(s);     // this show how to put stuff into the log
             framecount_=0;
             time_=0;
         }
+        */
 
         // Rotate the box thingy.
         // A much nicer way of doing this would be with a LogicComponent.
         // With LogicComponents it is easy to control things like movement
         // and animation from some IDE, console or just in game.
         // Alas, it is out of the scope for our simple example.
-        boxNode_->Rotate(Quaternion(8*timeStep,16*timeStep,0));
 
         Input* input=GetSubsystem<Input>();
         if(input->GetQualifierDown(1))  // 1 is shift, 2 is ctrl, 4 is alt
