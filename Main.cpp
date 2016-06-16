@@ -87,13 +87,26 @@ public:
         skybox->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
-        Node* boxNode_ = scene_->CreateChild("Box");
-        boxNode_->SetPosition(Vector3(0,2,15));
-        boxNode_->SetScale(Vector3(3,3,3));
-        StaticModel* boxObject = boxNode_->CreateComponent<StaticModel>();
-        boxObject->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
-        boxObject->SetMaterial(resourceCache_->GetResource<Material>("Materials/Stone.xml"));
-        boxObject->SetCastShadows(true);
+        for(int x=-30;x<30;x+=3) {
+            Node* boxNode_ = scene_->CreateChild("Sphere");
+            boxNode_->SetPosition(Vector3(0,2,15));
+            boxNode_->SetScale(Vector3(3,3,3));
+            StaticModel* boxObject = boxNode_->CreateComponent<StaticModel>();
+            boxObject->SetModel(resourceCache_->GetResource<Model>("Models/Sphere.mdl"));
+            boxObject->SetMaterial(resourceCache_->GetResource<Material>("Materials/DefaultMaterial.xml"));
+            boxObject->SetCastShadows(true);
+        }
+
+        Node* lightNode=scene_->CreateChild();
+        lightNode->SetDirection(Vector3::FORWARD);
+        lightNode->Yaw(50);     // horizontal
+        lightNode->Pitch(10);   // vertical
+        Light* light=lightNode->CreateComponent<Light>();
+        light->SetLightType(LIGHT_DIRECTIONAL);
+        light->SetBrightness(1.6);
+        light->SetColor(Color(1.0,.6,0.3,1));
+        light->SetCastShadows(true);
+
 
         cameraNode_ = scene_->CreateChild("Camera");
         Camera* camera = cameraNode_->CreateComponent<Camera>();
@@ -120,10 +133,10 @@ public:
 
         float pos = eventData[P_POSITION].GetFloat();
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
-            pd.sendFloat("x-axis", 300 + (500 * pos));
+            pd.sendFloat("x-axis", pos);
         }
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
-            pd.sendFloat("y-axis", 300 + (500 * pos));
+            pd.sendFloat("y-axis", pos);
         }
     }
 
