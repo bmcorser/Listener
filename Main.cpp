@@ -1,35 +1,40 @@
+#include <iostream>
 #include <string>
 #include <sstream>
+#include <stdlib.h>
 
+#include <Urho3D/Audio/BufferedSoundStream.h>
+#include <Urho3D/Audio/SoundSource.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Engine/Application.h>
 #include <Urho3D/Engine/Engine.h>
+#include <Urho3D/Graphics/Camera.h>
+#include <Urho3D/Graphics/DebugRenderer.h>
+#include <Urho3D/Graphics/Geometry.h>
+#include <Urho3D/Graphics/Graphics.h>
+#include <Urho3D/Graphics/Light.h>
+#include <Urho3D/Graphics/Material.h>
+#include <Urho3D/Graphics/Model.h>
+#include <Urho3D/Graphics/Octree.h>
+#include <Urho3D/Graphics/Renderer.h>
+#include <Urho3D/Graphics/Skybox.h>
+#include <Urho3D/Graphics/StaticModel.h>
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
-#include <Urho3D/IO/Log.h>
-#include <Urho3D/UI/UI.h>
-#include <Urho3D/UI/Text.h>
-#include <Urho3D/UI/Font.h>
-#include <Urho3D/UI/Button.h>
-#include <Urho3D/UI/UIEvents.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Scene/SceneEvents.h>
-#include <Urho3D/Graphics/Graphics.h>
-#include <Urho3D/Graphics/Camera.h>
-#include <Urho3D/Graphics/Geometry.h>
-#include <Urho3D/Graphics/Renderer.h>
-#include <Urho3D/Graphics/DebugRenderer.h>
-#include <Urho3D/Graphics/Octree.h>
-#include <Urho3D/Graphics/Light.h>
-#include <Urho3D/Graphics/Model.h>
-#include <Urho3D/Graphics/StaticModel.h>
-#include <Urho3D/Graphics/Material.h>
-#include <Urho3D/Graphics/Skybox.h>
+#include <Urho3D/UI/Button.h>
+#include <Urho3D/UI/Font.h>
+#include <Urho3D/UI/Text.h>
+#include <Urho3D/UI/UI.h>
+#include <Urho3D/UI/UIEvents.h>
 
 // #include "PDInstance.cpp"
-#include <PdBase.hpp>
+#include "PdBase.hpp"
+#include "PdObject.h"
 
 using namespace Urho3D;
 using namespace pd;
@@ -41,13 +46,25 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
+    SharedPtr<BufferedSoundStream> soundStream_;
     PdBase pd;
-    pd.init(0, 2, 44100, true);
 
     ListenerApp(Context * context) : Application(context) { }
 
     virtual void Setup()
     {
+        Node* node = new Node(context_);
+        SoundSource* source = node->CreateComponent<SoundSource>();
+        soundStream_ = new BufferedSoundStream();
+        soundStream_->SetFormat(44100, true, false); // TODO: Add stereo here
+        source->Play(soundStream_);
+
+        pd.init(0, 2, 44100, true);
+        pd.computeAudio(true);
+        // pd.queued(true);
+        Patch patch = pd.openPatch("patch.pd", "./");
+        // std::cout << patch << std::endl;
+
         engineParameters_["FullScreen"] = false;
 
         engineParameters_["WindowWidth"] = 1280;
@@ -113,9 +130,44 @@ public:
         }
     }
 
+    void HandleAudio()
+    {
+        // Try to keep 1/10 seconds of sound in the buffer, to avoid both dropouts and unnecessary latency
+        float targetLength = 1.0f / 10.0f;
+        float requiredLength = targetLength - soundStream_->GetBufferLength();
+        printf("requiredLength %u\n", requiredLength);
+        if (requiredLength < 0.0f)
+            return;
+
+        unsigned numSamples = (unsigned)(soundStream_->GetFrequency() * requiredLength);
+        printf("numSamples %u\n", numSamples);
+        if (!numSamples)
+            return;
+
+        SharedArrayPtr<short> newData(new short[numSamples]);
+        pd.processShort(1, NULL, newData);
+        /*
+        short *output = (short*)malloc(1024*2*sizeof(short));
+        short *output = (short*)malloc(1024*2*sizeof(short));
+        for (int i = 0; i < numSamples/2; i++) {
+        }
+        for (int i = 0; i < numSamples; i++) {
+            std::cout << newData[i] << ",";
+            // printf("%hu,", newData[i]);
+        }
+        printf("\n");
+        soundStream_->AddData(newData, numSamples * sizeof(short));
+        Queue buffer to the stream for playback
+        soundStream_->AddData(newData, numSamples * sizeof(signed short));
+        */
+        std::cout << pd.blockSize() << std::endl;
+
+    }
+
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
     {
-        float timeStep=eventData[Update::P_TIMESTEP].GetFloat();
+        HandleAudio();
+        float timeStep = eventData[Update::P_TIMESTEP].GetFloat();
 
         // Movement speed as world units per second
         float MOVE_SPEED=10.0f;
@@ -163,4 +215,4 @@ public:
 };
 
 // GO!
-URHO3D_DEFINE_APPLICATION_MAIN(ListenerApp)
+URHO3D_DEFINE_APPLICATION_MAIN(ListenerApp);
