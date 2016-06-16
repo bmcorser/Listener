@@ -34,7 +34,6 @@
 
 // #include "PDInstance.cpp"
 #include "PdBase.hpp"
-#include "PdObject.h"
 
 using namespace Urho3D;
 using namespace pd;
@@ -48,6 +47,8 @@ public:
     SharedPtr<Node> cameraNode_;
     SharedPtr<BufferedSoundStream> soundStream_;
     PdBase pd;
+    int sampleRate_ = 44100;
+    int channels_ = 2;
 
     ListenerApp(Context * context) : Application(context) { }
 
@@ -56,10 +57,10 @@ public:
         Node* node = new Node(context_);
         SoundSource* source = node->CreateComponent<SoundSource>();
         soundStream_ = new BufferedSoundStream();
-        soundStream_->SetFormat(44100, true, false); // TODO: Add stereo here
+        soundStream_->SetFormat(sampleRate_, true, channels_ == 2);
         source->Play(soundStream_);
 
-        pd.init(0, 2, 44100, true);
+        pd.init(0, channels_, sampleRate_, true);
         pd.computeAudio(true);
         // pd.queued(true);
         Patch patch = pd.openPatch("patch.pd", "./");
@@ -86,6 +87,14 @@ public:
         skybox->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
+        Node* boxNode_ = scene_->CreateChild("Box");
+        boxNode_->SetPosition(Vector3(0,2,15));
+        boxNode_->SetScale(Vector3(3,3,3));
+        StaticModel* boxObject = boxNode_->CreateComponent<StaticModel>();
+        boxObject->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
+        boxObject->SetMaterial(resourceCache_->GetResource<Material>("Materials/Stone.xml"));
+        boxObject->SetCastShadows(true);
+
         cameraNode_ = scene_->CreateChild("Camera");
         Camera* camera = cameraNode_->CreateComponent<Camera>();
         camera->SetFarClip(2000);
@@ -111,8 +120,10 @@ public:
 
         float pos = eventData[P_POSITION].GetFloat();
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
+            pd.sendFloat("x-axis", 300 + (500 * pos));
         }
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
+            pd.sendFloat("y-axis", 300 + (500 * pos));
         }
     }
 
@@ -132,36 +143,11 @@ public:
 
     void HandleAudio()
     {
-        // Try to keep 1/10 seconds of sound in the buffer, to avoid both dropouts and unnecessary latency
-        float targetLength = 1.0f / 10.0f;
-        float requiredLength = targetLength - soundStream_->GetBufferLength();
-        printf("requiredLength %u\n", requiredLength);
-        if (requiredLength < 0.0f)
-            return;
-
-        unsigned numSamples = (unsigned)(soundStream_->GetFrequency() * requiredLength);
-        printf("numSamples %u\n", numSamples);
-        if (!numSamples)
-            return;
-
-        SharedArrayPtr<short> newData(new short[numSamples]);
-        pd.processShort(1, NULL, newData);
-        /*
-        short *output = (short*)malloc(1024*2*sizeof(short));
-        short *output = (short*)malloc(1024*2*sizeof(short));
-        for (int i = 0; i < numSamples/2; i++) {
-        }
-        for (int i = 0; i < numSamples; i++) {
-            std::cout << newData[i] << ",";
-            // printf("%hu,", newData[i]);
-        }
-        printf("\n");
-        soundStream_->AddData(newData, numSamples * sizeof(short));
-        Queue buffer to the stream for playback
-        soundStream_->AddData(newData, numSamples * sizeof(signed short));
-        */
-        std::cout << pd.blockSize() << std::endl;
-
+        int ticks = 4;
+        int bufferSize = channels_ * ticks * pd.blockSize();
+        SharedArrayPtr<short> output(new short[bufferSize]);
+        pd.processShort(ticks, NULL, output);
+        soundStream_->AddData(output, bufferSize * sizeof(short));
     }
 
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
