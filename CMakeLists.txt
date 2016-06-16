@@ -58,7 +58,8 @@ ExternalProject_Add(
     BINARY_DIR ${LIBPD_ROOT}/src/libpd
     SOURCE_DIR ${LIBPD_ROOT}/src/libpd
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND make cpplib UTILS=true
+    BUILD_COMMAND make cpplib UTIL=true EXTRA=true
+    INSTALL_COMMAND ""
 )
 # add_library(libpd STATIC IMPORTED)
 # set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
