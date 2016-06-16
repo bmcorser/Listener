@@ -29,7 +29,7 @@
 #include <Urho3D/Graphics/Skybox.h>
 
 // #include "PDInstance.cpp"
-#include <libpd/libpd.h>
+#include <PdBase.hpp>
 
 using namespace Urho3D;
 

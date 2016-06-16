@@ -45,8 +45,6 @@ if (URHO3D_LUA)
 endif ()
 
 set(LIBPD_ROOT ${CMAKE_BINARY_DIR}/thirdparty/libpd)
-set(LIBPD_LIB_DIR ${LIBPD_ROOT}/bin/lib)
-set(LIBPD_INCLUDE_DIR ${LIBPD_ROOT}/bin/include)
 
 include(ExternalProject)
 ExternalProject_Add(
@@ -59,14 +57,12 @@ ExternalProject_Add(
     PATCH_COMMAND ""
     BINARY_DIR ${LIBPD_ROOT}/src/libpd
     SOURCE_DIR ${LIBPD_ROOT}/src/libpd
-    INSTALL_DIR ${LIBPD_ROOT}/bin
     CONFIGURE_COMMAND ""
     BUILD_COMMAND make
-    BUILD_BYPRODUCTS ${LIBPD_LIB_DIR}/libpd.a
 )
-add_library(libpd STATIC IMPORTED)
-set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_LIB_DIR}/libpd.a)
-add_dependencies(libpd hidapi_external)
+# add_library(libpd STATIC IMPORTED)
+# set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
+# add_dependencies(libpd libpd_external)
 
-include_directories(${LIBPD_INCLUDE_DIR})
-target_link_libraries(Main libpd)
+include_directories(${LIBPD_ROOT}/src/libpd/cpp)
+target_link_libraries(${TARGET_NAME} ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
