@@ -32,6 +32,7 @@
 #include <PdBase.hpp>
 
 using namespace Urho3D;
+using namespace pd;
 
 class ListenerApp : public Application
 {
@@ -40,7 +41,8 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
-    pd::PdBase pd;
+    PdBase pd;
+    pd.init(0, 2, 44100, true);
 
     ListenerApp(Context * context) : Application(context) { }
 

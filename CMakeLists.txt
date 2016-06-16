@@ -1,3 +1,4 @@
+include(ExternalProject)
 # Set CMake minimum version and CMake policy required by Urho3D-CMake-common module
 if (WIN32)
     cmake_minimum_required (VERSION 3.2.3)      # Going forward all platforms will use this as minimum version
@@ -46,7 +47,6 @@ endif ()
 
 set(LIBPD_ROOT ${CMAKE_BINARY_DIR}/thirdparty/libpd)
 
-include(ExternalProject)
 ExternalProject_Add(
     libpd_external
     PREFIX ${LIBPD_ROOT}
@@ -58,11 +58,13 @@ ExternalProject_Add(
     BINARY_DIR ${LIBPD_ROOT}/src/libpd
     SOURCE_DIR ${LIBPD_ROOT}/src/libpd
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND make
+    BUILD_COMMAND make cpplib UTILS=true
 )
 # add_library(libpd STATIC IMPORTED)
 # set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
 # add_dependencies(libpd libpd_external)
 
 include_directories(${LIBPD_ROOT}/src/libpd/cpp)
-target_link_libraries(${TARGET_NAME} ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
+include_directories(${LIBPD_ROOT}/src/libpd/pure-data/src)
+include_directories(${LIBPD_ROOT}/src/libpd/libpd_wrapper)
+target_link_libraries(${TARGET_NAME} ${LIBPD_ROOT}/src/libpd/libs/libpdcpp.dylib)
