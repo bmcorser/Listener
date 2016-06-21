@@ -62,6 +62,33 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 )
 
+
+# UNAME = $(shell uname)
+# SOLIB_PREFIX = lib
+
+# ifeq ($(UNAME), Darwin)  # Mac
+# SOLIB_EXT = dylib
+# PDNATIVE_PLATFORM = mac
+# CXXFLAGS = -D__MACOSX_CORE__
+# AUDIO_API = -framework Foundation -framework CoreAudio
+# else
+# ifeq ($(OS), Windows_NT)  # Windows, use Mingw
+# SOLIB_EXT = dll
+# SOLIB_PREFIX =·
+# PDNATIVE_PLATFORM = windows
+# CXXFLAGS = -D__WINDOWS_DS__
+# else  # Assume Linux
+# SOLIB_EXT = so
+# PDNATIVE_PLATFORM = linux
+# CXXFLAGS = -D__UNIX_JACK__ -D__LINUX_ALSA__
+# AUDIO_API = -ljack -lasound -pthread
+# endif
+# endif
+
+# TODO: fix for the above for building on other platforms? would like to just
+# target them tho
+add_definitions("-D__MACOSX_CORE__ -framework Foundation -framework CoreAudio")
+
 # add_library(libpd STATIC IMPORTED)
 # set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
 # add_dependencies(libpd libpd_external)

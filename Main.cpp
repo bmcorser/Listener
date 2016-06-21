@@ -3,7 +3,6 @@
 #include <sstream>
 #include <stdlib.h>
 
-#include <Urho3D/Audio/BufferedSoundStream.h>
 #include <Urho3D/Audio/SoundSource.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Engine/Application.h>
@@ -58,7 +57,6 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
-    SharedPtr<BufferedSoundStream> soundStream_;
     uint32_t sampleRate_;
     uint16_t channels_;
     unsigned int bufferFrames_;
@@ -97,10 +95,6 @@ public:
         // ok done
 
         Node* node = new Node(context_);
-        SoundSource* source = node->CreateComponent<SoundSource>();
-        soundStream_ = new BufferedSoundStream();
-        soundStream_->SetFormat(sampleRate_, true, channels_ == 2);
-        source->Play(soundStream_);
 
         libPd.init(0, channels_, sampleRate_, true);
         libPd.computeAudio(true);
@@ -192,15 +186,6 @@ public:
             GetSubsystem<Input>()->SetMouseVisible(!GetSubsystem<Input>()->IsMouseVisible());
             GetSubsystem<Input>()->SetMouseGrabbed(!GetSubsystem<Input>()->IsMouseGrabbed());
         }
-    }
-
-    void HandleAudio()
-    {
-        int ticks = 4;
-        int bufferSize = channels_ * ticks * libPd.blockSize();
-        SharedArrayPtr<short> output(new short[bufferSize]);
-        libPd.processShort(ticks, NULL, output);
-        soundStream_->AddData(output, bufferSize * sizeof(short));
     }
 
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
