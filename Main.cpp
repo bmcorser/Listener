@@ -32,7 +32,6 @@
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
 
-// #include "PDInstance.cpp"
 #include "PdBase.hpp"
 
 using namespace Urho3D;
@@ -47,10 +46,12 @@ public:
     SharedPtr<Node> cameraNode_;
     SharedPtr<BufferedSoundStream> soundStream_;
     PdBase pd;
-    int sampleRate_ = 44100;
-    int channels_ = 2;
+    uint32_t sampleRate_;
+    uint16_t channels_;
 
-    ListenerApp(Context * context) : Application(context) { }
+    ListenerApp(Context * context) :
+        Application(context), sampleRate_(44100), channels_(2)
+    { }
 
     virtual void Setup()
     {
@@ -87,15 +88,13 @@ public:
         skybox->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
-        for(int x=-30;x<30;x+=3) {
-            Node* boxNode_ = scene_->CreateChild("Sphere");
-            boxNode_->SetPosition(Vector3(0,2,15));
-            boxNode_->SetScale(Vector3(3,3,3));
-            StaticModel* boxObject = boxNode_->CreateComponent<StaticModel>();
-            boxObject->SetModel(resourceCache_->GetResource<Model>("Models/Sphere.mdl"));
-            boxObject->SetMaterial(resourceCache_->GetResource<Material>("Materials/DefaultMaterial.xml"));
-            boxObject->SetCastShadows(true);
-        }
+        Node* sphereNode = scene_->CreateChild("Sphere");
+        sphereNode->SetPosition(Vector3(0,2,15));
+        sphereNode->SetScale(Vector3(3,3,3));
+        StaticModel* sphereModel = sphereNode->CreateComponent<StaticModel>();
+        sphereModel->SetModel(resourceCache_->GetResource<Model>("Models/Sphere.mdl"));
+        // boxObject->SetMaterial(resourceCache_->GetResource<Material>("Materials/DefaultMaterial.xml"));
+        sphereModel->SetCastShadows(true);
 
         Node* lightNode=scene_->CreateChild();
         lightNode->SetDirection(Vector3::FORWARD);
@@ -133,7 +132,7 @@ public:
 
         float pos = eventData[P_POSITION].GetFloat();
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
-            pd.sendFloat("x-axis", pos);
+            pd.sendFloat("x-axis", -pos);
         }
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
             pd.sendFloat("y-axis", pos);
@@ -165,7 +164,7 @@ public:
 
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
     {
-        HandleAudio();
+        // HandleAudio();
         float timeStep = eventData[Update::P_TIMESTEP].GetFloat();
 
         // Movement speed as world units per second

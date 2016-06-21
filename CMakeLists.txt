@@ -61,6 +61,7 @@ ExternalProject_Add(
     BUILD_COMMAND make cpplib UTIL=true EXTRA=true
     INSTALL_COMMAND ""
 )
+
 # add_library(libpd STATIC IMPORTED)
 # set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
 # add_dependencies(libpd libpd_external)
@@ -69,3 +70,21 @@ include_directories(${LIBPD_ROOT}/src/libpd/cpp)
 include_directories(${LIBPD_ROOT}/src/libpd/pure-data/src)
 include_directories(${LIBPD_ROOT}/src/libpd/libpd_wrapper)
 target_link_libraries(${TARGET_NAME} ${LIBPD_ROOT}/src/libpd/libs/libpdcpp.dylib)
+
+
+set(STK_ROOT ${CMAKE_BINARY_DIR}/thirdparty/stk)
+ExternalProject_Add(
+    stk_external
+    PREFIX ${STK_ROOT}
+    GIT_REPOSITORY https://github.com/thestk/stk.git
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+    SOURCE_DIR ${STK_ROOT}/src/stk
+    BINARY_DIR ${STK_ROOT}/src/stk
+    CONFIGURE_COMMAND autoconf && ./configure -with-core
+    BUILD_COMMAND make
+    INSTALL_COMMAND ""
+)
+include_directories(${STK_ROOT}/src/stk/include)
+include_directories(${STK_ROOT}/src/stk)
+target_link_libraries(${TARGET_NAME} ${STK_ROOT}/src/stk/libstk.a)
