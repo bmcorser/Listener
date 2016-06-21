@@ -78,8 +78,6 @@ ExternalProject_Add(
 
 include_directories(${RTAUDIO_ROOT}/src/rtaudio-4.1.2)
 target_link_libraries(${TARGET_NAME} ${RTAUDIO_ROOT}/src/rtaudio-4.1.2/.libs/librtaudio.a)
-# target_link_libraries(${TARGET_NAME} ${RTAUDIO_ROOT}/src/rtaudio-4.1.2/.libs/librtaudio.5.dylib)
-# target_link_libraries(${TARGET_NAME} ${RTAUDIO_ROOT}/src/rtaudio-4.1.2/.libs/librtaudio.dylib)
 
 # add_library(libpd STATIC IMPORTED)
 # set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
