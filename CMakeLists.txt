@@ -62,38 +62,25 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 )
 
-
-# UNAME = $(shell uname)
-# SOLIB_PREFIX = lib
-
-# ifeq ($(UNAME), Darwin)  # Mac
-# SOLIB_EXT = dylib
-# PDNATIVE_PLATFORM = mac
-# CXXFLAGS = -D__MACOSX_CORE__
-# AUDIO_API = -framework Foundation -framework CoreAudio
-# else
-# ifeq ($(OS), Windows_NT)  # Windows, use Mingw
-# SOLIB_EXT = dll
-# SOLIB_PREFIX =·
-# PDNATIVE_PLATFORM = windows
-# CXXFLAGS = -D__WINDOWS_DS__
-# else  # Assume Linux
-# SOLIB_EXT = so
-# PDNATIVE_PLATFORM = linux
-# CXXFLAGS = -D__UNIX_JACK__ -D__LINUX_ALSA__
-# AUDIO_API = -ljack -lasound -pthread
-# endif
-# endif
-
-# TODO: fix for the above for building on other platforms? would like to just
-# target them tho
-add_definitions("-D__MACOSX_CORE__ -framework Foundation -framework CoreAudio")
-
-# add_library(libpd STATIC IMPORTED)
-# set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
-# add_dependencies(libpd libpd_external)
-
 include_directories(${LIBPD_ROOT}/src/libpd/cpp)
 include_directories(${LIBPD_ROOT}/src/libpd/pure-data/src)
 include_directories(${LIBPD_ROOT}/src/libpd/libpd_wrapper)
 target_link_libraries(${TARGET_NAME} ${LIBPD_ROOT}/src/libpd/libs/libpdcpp.dylib)
+
+
+set(RTAUDIO_ROOT ${CMAKE_BINARY_DIR}/thirdparty/rtaudio)
+ExternalProject_Add(
+    rtaudio_external
+    PREFIX ${RTAUDIO_ROOT}
+    URL http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-4.1.2.tar.gz
+    INSTALL_COMMAND ""
+)
+
+include_directories(${RTAUDIO_ROOT}/src/rtaudio-4.1.2)
+target_link_libraries(${TARGET_NAME} ${RTAUDIO_ROOT}/src/rtaudio-4.1.2/.libs/librtaudio.a)
+# target_link_libraries(${TARGET_NAME} ${RTAUDIO_ROOT}/src/rtaudio-4.1.2/.libs/librtaudio.5.dylib)
+# target_link_libraries(${TARGET_NAME} ${RTAUDIO_ROOT}/src/rtaudio-4.1.2/.libs/librtaudio.dylib)
+
+# add_library(libpd STATIC IMPORTED)
+# set_target_properties(libpd PROPERTIES IMPORTED_LOCATION ${LIBPD_ROOT}/src/libpd/libs/libpd.dylib)
+# add_dependencies(libpd libpd_external)

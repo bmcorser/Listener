@@ -89,6 +89,17 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/local/Cellar/cmake/3.5.2/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
+
 # Special rule for the target list_install_components
 list_install_components:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
@@ -110,17 +121,6 @@ install/fast: preinstall/fast
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
 	/usr/local/Cellar/cmake/3.5.2/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/local/Cellar/cmake/3.5.2/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -153,6 +153,19 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+#=============================================================================
+# Target rules for targets named rtaudio_external
+
+# Build rule for target.
+rtaudio_external: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rtaudio_external
+.PHONY : rtaudio_external
+
+# fast build rule for target.
+rtaudio_external/fast:
+	$(MAKE) -f CMakeFiles/rtaudio_external.dir/build.make CMakeFiles/rtaudio_external.dir/build
+.PHONY : rtaudio_external/fast
 
 #=============================================================================
 # Target rules for targets named libpd_external
@@ -207,33 +220,6 @@ Main.cpp.s:
 	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Main.cpp.s
 .PHONY : Main.cpp.s
 
-RtAudio.o: RtAudio.cpp.o
-
-.PHONY : RtAudio.o
-
-# target to build an object file
-RtAudio.cpp.o:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/RtAudio.cpp.o
-.PHONY : RtAudio.cpp.o
-
-RtAudio.i: RtAudio.cpp.i
-
-.PHONY : RtAudio.i
-
-# target to preprocess a source file
-RtAudio.cpp.i:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/RtAudio.cpp.i
-.PHONY : RtAudio.cpp.i
-
-RtAudio.s: RtAudio.cpp.s
-
-.PHONY : RtAudio.s
-
-# target to generate assembly for a file
-RtAudio.cpp.s:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/RtAudio.cpp.s
-.PHONY : RtAudio.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -243,17 +229,15 @@ help:
 	@echo "... test"
 	@echo "... install/local"
 	@echo "... edit_cache"
+	@echo "... rebuild_cache"
+	@echo "... rtaudio_external"
 	@echo "... list_install_components"
 	@echo "... install"
 	@echo "... libpd_external"
-	@echo "... rebuild_cache"
 	@echo "... Main"
 	@echo "... Main.o"
 	@echo "... Main.i"
 	@echo "... Main.s"
-	@echo "... RtAudio.o"
-	@echo "... RtAudio.i"
-	@echo "... RtAudio.s"
 .PHONY : help
 
 

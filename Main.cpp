@@ -44,7 +44,7 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFra
 
    // Pd magic
    int ticks = nBufferFrames / 64;
-   std::cout << ticks << std::endl;
+   // std::cout << ticks << std::endl;
    libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
 
    return 0;
@@ -79,8 +79,6 @@ public:
         // don't use urho's audio buffer stream thing
         RtAudio::StreamParameters parameters;
         parameters.deviceId = audio.getDefaultOutputDevice();
-        std::cout << "ok to here" << std::endl;
-        std::cout << "audio.getDefaultOutputDevice(): " << audio.getDefaultOutputDevice() << std::endl;
         parameters.nChannels = 2;
 
         RtAudio::StreamOptions options;
@@ -90,7 +88,6 @@ public:
             options.flags |= RTAUDIO_MINIMIZE_LATENCY; // CoreAudio doesn't seem to like this
         }
         audio.openStream( &parameters, NULL, RTAUDIO_FLOAT32, sampleRate_, &bufferFrames_, &audioCallback, NULL, &options );
-        std::cout << "ok to here" << std::endl;
         audio.startStream();
         // ok done
 
@@ -98,9 +95,11 @@ public:
 
         libPd.init(0, channels_, sampleRate_, true);
         libPd.computeAudio(true);
-        // libPd.queued(true);
         Patch patch = libPd.openPatch("patch.pd", "./");
-        // std::cout << patch << std::endl;
+        std::cout << patch << std::endl;
+
+        Patch patch2 = libPd.openPatch("patch.pd", "./");
+        std::cout << patch2 << std::endl;
 
         engineParameters_["FullScreen"] = false;
 
@@ -141,7 +140,6 @@ public:
         light->SetColor(Color(1.0,.6,0.3,1));
         light->SetCastShadows(true);
 
-
         cameraNode_ = scene_->CreateChild("Camera");
         Camera* camera = cameraNode_->CreateComponent<Camera>();
         camera->SetFarClip(2000);
@@ -167,10 +165,10 @@ public:
 
         float pos = eventData[P_POSITION].GetFloat();
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
-            libPd.sendFloat("x-axis", -pos);
+            libPd.sendFloat("1003-x-axis", -pos);
         }
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
-            libPd.sendFloat("y-axis", pos);
+            libPd.sendFloat("1003-y-axis", pos);
         }
     }
 
