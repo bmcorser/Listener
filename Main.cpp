@@ -40,13 +40,16 @@ using namespace pd;
 RtAudio audio;
 PdBase libPd;
 
-int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *userData){
-
-   // Pd magic
+int audioCallback(
+    void *outputBuffer,
+    void *inputBuffer,
+    unsigned int nBufferFrames,
+    double streamTime,
+    RtAudioStreamStatus status,
+    void *userData
+){
    int ticks = nBufferFrames / 64;
-   // std::cout << ticks << std::endl;
    libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
-
    return 0;
 }
 
@@ -79,7 +82,7 @@ public:
         // don't use urho's audio buffer stream thing
         RtAudio::StreamParameters parameters;
         parameters.deviceId = audio.getDefaultOutputDevice();
-        parameters.nChannels = 2;
+        parameters.nChannels = channels_;
 
         RtAudio::StreamOptions options;
         options.streamName = "LibPD Test";
@@ -87,7 +90,7 @@ public:
         if ( audio.getCurrentApi() != RtAudio::MACOSX_CORE ) {
             options.flags |= RTAUDIO_MINIMIZE_LATENCY; // CoreAudio doesn't seem to like this
         }
-        audio.openStream( &parameters, NULL, RTAUDIO_FLOAT32, sampleRate_, &bufferFrames_, &audioCallback, NULL, &options );
+        audio.openStream(&parameters, NULL, RTAUDIO_FLOAT32, sampleRate_, &bufferFrames_, &audioCallback, NULL, &options);
         audio.startStream();
         // ok done
 
