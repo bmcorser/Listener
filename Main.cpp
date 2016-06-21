@@ -33,9 +33,23 @@
 #include <Urho3D/UI/UIEvents.h>
 
 #include "PdBase.hpp"
+#include "RtAudio.h"
 
 using namespace Urho3D;
 using namespace pd;
+
+RtAudio audio;
+PdBase libPd;
+
+int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *userData){
+
+   // Pd magic
+   int ticks = nBufferFrames / 64;
+   std::cout << ticks << std::endl;
+   libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
+
+   return 0;
+}
 
 class ListenerApp : public Application
 {
@@ -45,26 +59,53 @@ public:
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
     SharedPtr<BufferedSoundStream> soundStream_;
-    PdBase pd;
     uint32_t sampleRate_;
     uint16_t channels_;
+    unsigned int bufferFrames_;
 
     ListenerApp(Context * context) :
-        Application(context), sampleRate_(44100), channels_(2)
-    { }
+        Application(context),
+        sampleRate_(44100),
+        channels_(2),
+        bufferFrames_(128)
+    {
+        // constructor
+    }
 
     virtual void Setup()
     {
+        if(audio.getDeviceCount()==0){
+            std::cout << "There are no available sound devices." << std::endl;
+            exit(1);
+        }
+        // don't use urho's audio buffer stream thing
+        RtAudio::StreamParameters parameters;
+        parameters.deviceId = audio.getDefaultOutputDevice();
+        std::cout << "ok to here" << std::endl;
+        std::cout << "audio.getDefaultOutputDevice(): " << audio.getDefaultOutputDevice() << std::endl;
+        parameters.nChannels = 2;
+
+        RtAudio::StreamOptions options;
+        options.streamName = "LibPD Test";
+        options.flags = RTAUDIO_SCHEDULE_REALTIME;
+        if ( audio.getCurrentApi() != RtAudio::MACOSX_CORE ) {
+            options.flags |= RTAUDIO_MINIMIZE_LATENCY; // CoreAudio doesn't seem to like this
+        }
+        audio.openStream( &parameters, NULL, RTAUDIO_FLOAT32, sampleRate_, &bufferFrames_, &audioCallback, NULL, &options );
+        std::cout << "ok to here" << std::endl;
+        audio.startStream();
+        // ok done
+
         Node* node = new Node(context_);
         SoundSource* source = node->CreateComponent<SoundSource>();
         soundStream_ = new BufferedSoundStream();
         soundStream_->SetFormat(sampleRate_, true, channels_ == 2);
         source->Play(soundStream_);
 
-        pd.init(0, channels_, sampleRate_, true);
-        pd.computeAudio(true);
-        // pd.queued(true);
-        Patch patch = pd.openPatch("patch.pd", "./");
+        libPd.init(0, channels_, sampleRate_, true);
+        libPd.computeAudio(true);
+        // libPd.queued(true);
+        Patch patch = libPd.openPatch("patch.pd", "./");
         // std::cout << patch << std::endl;
 
         engineParameters_["FullScreen"] = false;
@@ -132,10 +173,10 @@ public:
 
         float pos = eventData[P_POSITION].GetFloat();
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
-            pd.sendFloat("x-axis", -pos);
+            libPd.sendFloat("x-axis", -pos);
         }
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
-            pd.sendFloat("y-axis", pos);
+            libPd.sendFloat("y-axis", pos);
         }
     }
 
@@ -156,9 +197,9 @@ public:
     void HandleAudio()
     {
         int ticks = 4;
-        int bufferSize = channels_ * ticks * pd.blockSize();
+        int bufferSize = channels_ * ticks * libPd.blockSize();
         SharedArrayPtr<short> output(new short[bufferSize]);
-        pd.processShort(ticks, NULL, output);
+        libPd.processShort(ticks, NULL, output);
         soundStream_->AddData(output, bufferSize * sizeof(short));
     }
 
