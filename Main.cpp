@@ -31,27 +31,9 @@
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
 
-#include "PdBase.hpp"
-#include "RtAudio.h"
+#include "src/PdPatchManager.cpp"
 
 using namespace Urho3D;
-using namespace pd;
-
-RtAudio audio;
-PdBase libPd;
-
-int audioCallback(
-    void *outputBuffer,
-    void *inputBuffer,
-    unsigned int nBufferFrames,
-    double streamTime,
-    RtAudioStreamStatus status,
-    void *userData
-){
-   int ticks = nBufferFrames / 64;
-   libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
-   return 0;
-}
 
 class ListenerApp : public Application
 {
@@ -60,49 +42,16 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
-    uint32_t sampleRate_;
-    uint16_t channels_;
-    unsigned int bufferFrames_;
+    AudioManager audioManager_;
 
-    ListenerApp(Context * context) :
-        Application(context),
-        sampleRate_(44100),
-        channels_(2),
-        bufferFrames_(128)
+    ListenerApp(Context * context) : Application(context)
     {
         // constructor
     }
 
     virtual void Setup()
     {
-        if(audio.getDeviceCount()==0){
-            std::cout << "There are no available sound devices." << std::endl;
-            exit(1);
-        }
-        // don't use urho's audio buffer stream thing
-        RtAudio::StreamParameters parameters;
-        parameters.deviceId = audio.getDefaultOutputDevice();
-        parameters.nChannels = channels_;
-
-        RtAudio::StreamOptions options;
-        options.streamName = "LibPD Test";
-        options.flags = RTAUDIO_SCHEDULE_REALTIME;
-        if ( audio.getCurrentApi() != RtAudio::MACOSX_CORE ) {
-            options.flags |= RTAUDIO_MINIMIZE_LATENCY; // CoreAudio doesn't seem to like this
-        }
-        audio.openStream(&parameters, NULL, RTAUDIO_FLOAT32, sampleRate_, &bufferFrames_, &audioCallback, NULL, &options);
-        audio.startStream();
-        // ok done
-
-        Node* node = new Node(context_);
-
-        libPd.init(0, channels_, sampleRate_, true);
-        libPd.computeAudio(true);
-        Patch patch = libPd.openPatch("patch.pd", "./");
-        std::cout << patch << std::endl;
-
-        Patch patch2 = libPd.openPatch("patch.pd", "./");
-        std::cout << patch2 << std::endl;
+        audioManager_.init(44100, 128);
 
         engineParameters_["FullScreen"] = false;
 
@@ -168,10 +117,12 @@ public:
 
         float pos = eventData[P_POSITION].GetFloat();
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
-            libPd.sendFloat("1003-x-axis", -pos);
+            // libPd.sendFloat("1003-x-axis", -pos);
+            // TODO: call Audio::Update
         }
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
-            libPd.sendFloat("1003-y-axis", pos);
+            // libPd.sendFloat("1003-y-axis", pos);
+            // TODO: call Audio::Update
         }
     }
 

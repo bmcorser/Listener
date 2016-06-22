@@ -122,6 +122,17 @@ install/fast: preinstall/fast
 	/usr/local/Cellar/cmake/3.5.2/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/local/Cellar/cmake/3.5.2/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: install/strip
+
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/ben/work/games/Listener/CMakeFiles /Users/ben/work/games/Listener/CMakeFiles/progress.marks
@@ -193,33 +204,6 @@ Main/fast:
 	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/build
 .PHONY : Main/fast
 
-Audio.o: Audio.cpp.o
-
-.PHONY : Audio.o
-
-# target to build an object file
-Audio.cpp.o:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Audio.cpp.o
-.PHONY : Audio.cpp.o
-
-Audio.i: Audio.cpp.i
-
-.PHONY : Audio.i
-
-# target to preprocess a source file
-Audio.cpp.i:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Audio.cpp.i
-.PHONY : Audio.cpp.i
-
-Audio.s: Audio.cpp.s
-
-.PHONY : Audio.s
-
-# target to generate assembly for a file
-Audio.cpp.s:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Audio.cpp.s
-.PHONY : Audio.cpp.s
-
 Main.o: Main.cpp.o
 
 .PHONY : Main.o
@@ -257,14 +241,12 @@ help:
 	@echo "... install/local"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... rtaudio_external"
 	@echo "... list_install_components"
+	@echo "... rtaudio_external"
 	@echo "... install"
+	@echo "... install/strip"
 	@echo "... libpd_external"
 	@echo "... Main"
-	@echo "... Audio.o"
-	@echo "... Audio.i"
-	@echo "... Audio.s"
 	@echo "... Main.o"
 	@echo "... Main.i"
 	@echo "... Main.s"
