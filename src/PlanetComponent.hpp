@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Urho3D/Graphics/Model.h>
-#include <Urho3D/Graphics/Geometry.h> 
-#include <Urho3D/Graphics/VertexBuffer.h>
+#include "CustomGeo.cpp"
 
 using namespace Urho3D;
 

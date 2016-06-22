@@ -40,50 +40,41 @@ void PlanetComponent::Update(float timeStep)
 
 Node* PlanetComponent::place(Vector3 pos)
 {
-    ResourceCache* cache = GetSubsystem<ResourceCache>();
-
     Node* node = scene->CreateChild("Planet");
     node->SetPosition(pos);
+    /*
     node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
     node->SetScale(2.0f + Random(15));
-
-    StaticModel* staticModel = node->CreateComponent<StaticModel>();
-    Model* model = new Model(context_);
-    VertexBuffer* vertexBuffer = new VertexBuffer(context_);
-    vertexBuffer->SetSize(12, NULL);
-    /*
-    1, 1, 1,
-    -1, 1,-1,
-    1, -1,-1,
-    -1, 1,-1,
-    -1, -1, 1,
-    1, -1,-1,
-    1, 1, 1,
-    1, -1,-1,
-    -1, -1, 1,
-    1, 1, 1,
-    -1, -1, 1,
-    -1, 1,-1,
     */
-    std::cout << "count " << vertexBuffer->GetVertexCount() << std::endl;
-    std::cout << "size " << vertexBuffer->GetVertexSize() << std::endl;
-    exit(0);
-    unsigned char* vertexData = (unsigned char*)vertexBuffer->Lock(0, vertexBuffer->GetVertexCount());
-    vertexBuffer->Unlock();
+    node->SetScale(15);
+
+    CustomGeo* cg = new CustomGeo(context_);
+
+    // hexahedron
+    Vector3 v1 = Vector3(-1, -1, -1);
+    Vector3 v2 = Vector3(1, -1, -1);
+    Vector3 v3 = Vector3(1, -1, 1);
+    Vector3 v4 = Vector3(-1, -1, 1);
+    Vector3 v5 = Vector3(-1, 1, -1);
+    Vector3 v6 = Vector3(-1, 1, 1);
+    Vector3 v7 = Vector3(1, 1, 1);
+    Vector3 v8 = Vector3(1, 1, -1);
+
+    cg->AddPoint(v1);
+    cg->AddPoint(v2);
+    cg->AddPoint(v3);
+    cg->AddPoint(v4);
+    cg->AddPoint(v5);
+    cg->AddPoint(v6);
+    cg->AddPoint(v7);
+    cg->AddPoint(v8);
+
+    cg->AddTriangle(0, 1, 2, true);
+    cg->AddTriangle(2, 1, 2, true);
+
+    cg->Build(node, false, false, 32, 63);
 
     /*
-    Model* model = cache->GetResource<Model>("Models/Sphere.mdl");
-    mushroomObject->SetModel(mushroomModel);
-    VertexBuffer* buffer = mushroomModel->GetGeometry(0, 0)->GetVertexBuffer(0);
-    unsigned char* vertexData = (unsigned char*)buffer->Lock(0, buffer->GetVertexCount());
-    unsigned numVertices = buffer->GetVertexCount();
-    unsigned vertexSize = buffer->GetVertexSize();
-    PODVector<Vector3> vertices;
-    for (unsigned i = 0; i < numVertices; ++i)
-    {
-        Vector3& vertex = *reinterpret_cast<Vector3*>(vertexData + i * vertexSize);
-        // vertex.x_ += 3;
-    }
     Material* material = new Material(context_);
     // ("Materials/DefaultMaterial.xml");
     if (material) {

@@ -78,8 +78,9 @@ public:
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
         PlanetComponent* planetComponent = scene_->CreateComponent<PlanetComponent>();
-        planetComponent->place(Vector3(0,0,0));
+        planetComponent->place(Vector3(0, 2, 15));
 
+        /*
         Node* sphereNode = scene_->CreateChild("Sphere");
         sphereNode->SetPosition(Vector3(0,2,15));
         sphereNode->SetScale(Vector3(3,3,3));
@@ -87,6 +88,7 @@ public:
         sphereModel->SetModel(resourceCache_->GetResource<Model>("Models/Sphere.mdl"));
         // boxObject->SetMaterial(resourceCache_->GetResource<Material>("Materials/DefaultMaterial.xml"));
         sphereModel->SetCastShadows(true);
+        */
 
         Node* lightNode=scene_->CreateChild();
         lightNode->SetDirection(Vector3::FORWARD);
