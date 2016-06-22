@@ -22,14 +22,13 @@ int audioCallback(
 
 class PdPatchManager
 {
+
     public:
     void init (int sampleRate, unsigned int bufferFrames) {
-        std::cout << "Hello, computer" << std::endl;
-        if(rtAudio.getDeviceCount()==0){
+        if(rtAudio.getDeviceCount() == 0){
             std::cout << "There are no available sound devices." << std::endl;
             exit(1);
         }
-        // don't use urho's audio buffer stream thing
         RtAudio::StreamParameters parameters;
         parameters.deviceId = rtAudio.getDefaultOutputDevice();
         parameters.nChannels = 2;
@@ -51,12 +50,10 @@ class PdPatchManager
             &options
         );
         rtAudio.startStream();
-        // ok done
 
         libPd.init(0, 2, sampleRate, true);
         libPd.computeAudio(true);
         Patch patch = libPd.openPatch("patch.pd", "./");
-        std::cout << patch << std::endl;
     }
     void updateX(float pos) {
         libPd.sendFloat("x-axis", -pos);

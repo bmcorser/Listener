@@ -116,6 +116,7 @@ public:
         using namespace JoystickAxisMove;
 
         float pos = eventData[P_POSITION].GetFloat();
+
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
             pdPatchManager_.updateX(pos);
         }
