@@ -50,54 +50,58 @@ Node* PlanetComponent::place(Vector3 pos)
 
     CustomGeo* cg = new CustomGeo(context_);
 
+    float phi = (1 + sqrt(5)) / 2;
+    float a = 1 / 2;
+    float b = 1 / (2 * phi);
+
     // icosahedron
-        Vector3 v1  = Vector3( 0,  b, -a);
-        Vector3 v2  = Vector3( b,  a,  0);
-        Vector3 v3  = Vector3(-b,  a,  0);
-        Vector3 v4  = Vector3( 0,  b,  a);
-        Vector3 v5  = Vector3( 0, -b,  a);
-        Vector3 v6  = Vector3(-a,  0,  b);
-        Vector3 v7  = Vector3( 0, -b, -a);
-        Vector3 v8  = Vector3( a,  0, -b);
-        Vector3 v9  = Vector3( a,  0,  b);
-        Vector3 v10 = Vector3(-a,  0, -b);
-        Vector3 v11 = Vector3( b, -a,  0);
-        Vector3 v12 = Vector3(-b, -a,  0);
+    Vector3 v1  = Vector3( 0,  b, -a);
+    Vector3 v2  = Vector3( b,  a,  0);
+    Vector3 v3  = Vector3(-b,  a,  0);
+    Vector3 v4  = Vector3( 0,  b,  a);
+    Vector3 v5  = Vector3( 0, -b,  a);
+    Vector3 v6  = Vector3(-a,  0,  b);
+    Vector3 v7  = Vector3( 0, -b, -a);
+    Vector3 v8  = Vector3( a,  0, -b);
+    Vector3 v9  = Vector3( a,  0,  b);
+    Vector3 v10 = Vector3(-a,  0, -b);
+    Vector3 v11 = Vector3( b, -a,  0);
+    Vector3 v12 = Vector3(-b, -a,  0);
 
-        cg->AddPoint(v1 );
-        cg->AddPoint(v2 );
-        cg->AddPoint(v3 );
-        cg->AddPoint(v4 );
-        cg->AddPoint(v5 );
-        cg->AddPoint(v6 );
-        cg->AddPoint(v7 );
-        cg->AddPoint(v8 );
-        cg->AddPoint(v9 );
-        cg->AddPoint(v10);
-        cg->AddPoint(v11);
-        cg->AddPoint(v12);
+    cg->AddPoint(v1 );
+    cg->AddPoint(v2 );
+    cg->AddPoint(v3 );
+    cg->AddPoint(v4 );
+    cg->AddPoint(v5 );
+    cg->AddPoint(v6 );
+    cg->AddPoint(v7 );
+    cg->AddPoint(v8 );
+    cg->AddPoint(v9 );
+    cg->AddPoint(v10);
+    cg->AddPoint(v11);
+    cg->AddPoint(v12);
 
-        // draw the icosahedron's 20 triangular faces:
-        cg->AddTriangle(0, 1, 2, true);
-        cg->AddTriangle(3, 2, 1, true);
-        cg->AddTriangle(3, 4, 5, true);
-        cg->AddTriangle(3, 8, 4, true);
-        cg->AddTriangle(0, 6, 7, true);
-        cg->AddTriangle(0, 9, 6, true);
-        cg->AddTriangle(4, 10, 11, true);
-        cg->AddTriangle(6, 11, 10, true);
-        cg->AddTriangle(2, 5, 9, true);
-        cg->AddTriangle(11, 9, 5, true);
-        cg->AddTriangle(1, 7, 8, true);
-        cg->AddTriangle(10, 8, 7, true);
-        cg->AddTriangle(3, 5, 2, true);
-        cg->AddTriangle(3, 1, 8, true);
-        cg->AddTriangle(0, 2, 9, true);
-        cg->AddTriangle(0, 7, 1, true);
-        cg->AddTriangle(6, 9, 11, true);
-        cg->AddTriangle(6, 10, 7, true);
-        cg->AddTriangle(4, 11, 5, true);
-        cg->AddTriangle(4, 8, 10, true);
+    // draw the icosahedron's 20 triangular faces:
+    cg->AddTriangle(0, 1, 2, true);
+    cg->AddTriangle(3, 2, 1, true);
+    cg->AddTriangle(3, 4, 5, true);
+    cg->AddTriangle(3, 8, 4, true);
+    cg->AddTriangle(0, 6, 7, true);
+    cg->AddTriangle(0, 9, 6, true);
+    cg->AddTriangle(4, 10, 11, true);
+    cg->AddTriangle(6, 11, 10, true);
+    cg->AddTriangle(2, 5, 9, true);
+    cg->AddTriangle(11, 9, 5, true);
+    cg->AddTriangle(1, 7, 8, true);
+    cg->AddTriangle(10, 8, 7, true);
+    cg->AddTriangle(3, 5, 2, true);
+    cg->AddTriangle(3, 1, 8, true);
+    cg->AddTriangle(0, 2, 9, true);
+    cg->AddTriangle(0, 7, 1, true);
+    cg->AddTriangle(6, 9, 11, true);
+    cg->AddTriangle(6, 10, 7, true);
+    cg->AddTriangle(4, 11, 5, true);
+    cg->AddTriangle(4, 8, 10, true);
 
     cg->Build(node, false, false, 32, 63);
 
