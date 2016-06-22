@@ -1,9 +1,10 @@
 #include "PdBase.hpp"
 #include "RtAudio.h"
 
+using namespace Urho3D;
 using namespace pd;
 
-RtAudio audio;
+RtAudio rtAudio;
 PdBase libPd;
 
 int audioCallback(
@@ -19,36 +20,48 @@ int audioCallback(
    return 0;
 }
 
-class AudioManager
+class PdPatchManager
 {
     public:
     void init (int sampleRate, unsigned int bufferFrames) {
         std::cout << "Hello, computer" << std::endl;
-        if(audio.getDeviceCount()==0){
+        if(rtAudio.getDeviceCount()==0){
             std::cout << "There are no available sound devices." << std::endl;
             exit(1);
         }
         // don't use urho's audio buffer stream thing
         RtAudio::StreamParameters parameters;
-        parameters.deviceId = audio.getDefaultOutputDevice();
+        parameters.deviceId = rtAudio.getDefaultOutputDevice();
         parameters.nChannels = 2;
 
         RtAudio::StreamOptions options;
-        options.streamName = "LibPD Test";
+        options.streamName = "planets";
         options.flags = RTAUDIO_SCHEDULE_REALTIME;
-        if ( audio.getCurrentApi() != RtAudio::MACOSX_CORE ) {
+        if (rtAudio.getCurrentApi() != RtAudio::MACOSX_CORE) {
             options.flags |= RTAUDIO_MINIMIZE_LATENCY; // CoreAudio doesn't seem to like this
         }
-        audio.openStream(&parameters, NULL, RTAUDIO_FLOAT32, sampleRate, &bufferFrames, &audioCallback, NULL, &options);
-        audio.startStream();
+        rtAudio.openStream(
+            &parameters,
+            NULL,
+            RTAUDIO_FLOAT32,
+            sampleRate,
+            &bufferFrames,
+            &audioCallback,
+            NULL,
+            &options
+        );
+        rtAudio.startStream();
         // ok done
 
         libPd.init(0, 2, sampleRate, true);
         libPd.computeAudio(true);
         Patch patch = libPd.openPatch("patch.pd", "./");
         std::cout << patch << std::endl;
-
-        Patch patch2 = libPd.openPatch("patch.pd", "./");
-        std::cout << patch2 << std::endl;
+    }
+    void updateX(float pos) {
+        libPd.sendFloat("x-axis", -pos);
+    }
+    void updateY(float pos) {
+        libPd.sendFloat("y-axis", pos);
     }
 };

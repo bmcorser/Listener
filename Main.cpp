@@ -42,7 +42,7 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
-    AudioManager audioManager_;
+    PdPatchManager pdPatchManager_;
 
     ListenerApp(Context * context) : Application(context)
     {
@@ -51,7 +51,7 @@ public:
 
     virtual void Setup()
     {
-        audioManager_.init(44100, 128);
+        pdPatchManager_.init(44100, 128);
 
         engineParameters_["FullScreen"] = false;
 
@@ -117,12 +117,10 @@ public:
 
         float pos = eventData[P_POSITION].GetFloat();
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
-            // libPd.sendFloat("1003-x-axis", -pos);
-            // TODO: call Audio::Update
+            pdPatchManager_.updateX(pos);
         }
         if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
-            // libPd.sendFloat("1003-y-axis", pos);
-            // TODO: call Audio::Update
+            pdPatchManager_.updateY(pos);
         }
     }
 
