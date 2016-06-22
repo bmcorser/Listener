@@ -32,6 +32,8 @@
 #include <Urho3D/UI/UIEvents.h>
 
 #include "src/PdPatchManager.cpp"
+#include "src/OrbitalCamera.cpp"
+#include "src/PlanetComponent.cpp"
 
 using namespace Urho3D;
 
@@ -46,7 +48,8 @@ public:
 
     ListenerApp(Context * context) : Application(context)
     {
-        // constructor
+        OrbitalCamera::RegisterObject(context_);
+        PlanetComponent::RegisterObject(context_);
     }
 
     virtual void Setup()
@@ -74,6 +77,9 @@ public:
         skybox->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
+        PlanetComponent* planetComponent = scene_->CreateComponent<PlanetComponent>();
+        planetComponent->place(Vector3(0,0,0));
+
         Node* sphereNode = scene_->CreateChild("Sphere");
         sphereNode->SetPosition(Vector3(0,2,15));
         sphereNode->SetScale(Vector3(3,3,3));
@@ -91,6 +97,11 @@ public:
         light->SetBrightness(1.6);
         light->SetColor(Color(1.0,.6,0.3,1));
         light->SetCastShadows(true);
+
+        /*
+        orbitalCameraNode = scene_->CreateChild("CameraRoot");
+        orbitalCamera = orbitalCameraNode->CreateComponent<OrbitalCamera>();
+        */
 
         cameraNode_ = scene_->CreateChild("Camera");
         Camera* camera = cameraNode_->CreateComponent<Camera>();
