@@ -56,6 +56,9 @@ class PdPatchManager
         Patch patch = libPd.openPatch("patch.pd", "./");
     }
     void updateX(float pos) {
+        /*
+        std::cout << pos << std::endl;
+        */
         libPd.sendFloat("x-axis", -pos);
     }
     void updateY(float pos) {

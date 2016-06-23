@@ -20,20 +20,23 @@ public:
     virtual void Start();
     void Update(float timeStep);
     virtual void FixedUpdate(float timeStep) {};
+    void HandleJoystickAxis(StringHash eventType,VariantMap& eventData);
 
-    void SetTargetNode(Node* proposedTarget);
+    void SetTargetNode(Node* node) { target = node->GetPosition(); }
+    void SetTargetPos(Vector3 pos) { target = pos; }
     void SetRadiusLimits(float minDistance, float maxDistance);
 
     SharedPtr<Camera> camera;
     Vector3 target;
-
-private:
 
     SharedPtr<Node> containerNode;
     SharedPtr<Node> yawNode;
     SharedPtr<Node> pitchNode;
     SharedPtr<Node> cameraNode;
     SharedPtr<Node> balanceNode;
+
+
+private:
 
     SharedPtr<SmoothedTransform> targetTransform;
     SharedPtr<SmoothedTransform> pitchTransform;

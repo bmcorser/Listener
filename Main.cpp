@@ -44,6 +44,7 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
+    SharedPtr<PlanetComponent> planetComponent;
     PdPatchManager pdPatchManager_;
 
     ListenerApp(Context * context) : Application(context)
@@ -77,18 +78,8 @@ public:
         skybox->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
-        PlanetComponent* planetComponent = scene_->CreateComponent<PlanetComponent>();
+        /* PlanetComponent* */ planetComponent = scene_->CreateComponent<PlanetComponent>();
         planetComponent->place(Vector3(0, 2, 15));
-
-        /*
-        Node* sphereNode = scene_->CreateChild("Sphere");
-        sphereNode->SetPosition(Vector3(0,2,15));
-        sphereNode->SetScale(Vector3(3,3,3));
-        StaticModel* sphereModel = sphereNode->CreateComponent<StaticModel>();
-        sphereModel->SetModel(resourceCache_->GetResource<Model>("Models/Sphere.mdl"));
-        // boxObject->SetMaterial(resourceCache_->GetResource<Material>("Materials/DefaultMaterial.xml"));
-        sphereModel->SetCastShadows(true);
-        */
 
         Node* lightNode=scene_->CreateChild();
         lightNode->SetDirection(Vector3::FORWARD);
@@ -100,42 +91,23 @@ public:
         light->SetColor(Color(1.0,.6,0.3,1));
         light->SetCastShadows(true);
 
-        /*
-        orbitalCameraNode = scene_->CreateChild("CameraRoot");
-        orbitalCamera = orbitalCameraNode->CreateComponent<OrbitalCamera>();
-        */
-
-        cameraNode_ = scene_->CreateChild("Camera");
-        Camera* camera = cameraNode_->CreateComponent<Camera>();
-        camera->SetFarClip(2000);
+        Node* orbitalCameraNode = scene_->CreateChild("CameraRoot");
+        OrbitalCamera* orbitalCamera = orbitalCameraNode->CreateComponent<OrbitalCamera>();
+        orbitalCamera->SetTargetPos(Vector3(0, 0, 0));
+        cameraNode_ = orbitalCamera->cameraNode;
 
         Renderer* renderer = GetSubsystem<Renderer>();
-        SharedPtr<Viewport> viewport(new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>())); // don't call
+        SharedPtr<Viewport> viewport(new Viewport(context_, scene_, orbitalCamera->camera));
         renderer->SetViewport(0,viewport);
 
         SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ListenerApp, HandleKeyDown));
         SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(ListenerApp, HandleUpdate));
         SubscribeToEvent(E_RENDERUPDATE, URHO3D_HANDLER(ListenerApp, HandleRenderUpdate));
         SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(ListenerApp, HandlePostRenderUpdate));
-        SubscribeToEvent(E_JOYSTICKAXISMOVE, URHO3D_HANDLER(ListenerApp, HandleJoystickAxis));
     }
 
     virtual void Stop()
     {
-    }
-
-    void HandleJoystickAxis(StringHash eventType,VariantMap& eventData)
-    {
-        using namespace JoystickAxisMove;
-
-        float pos = eventData[P_POSITION].GetFloat();
-
-        if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
-            pdPatchManager_.updateX(pos);
-        }
-        if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
-            pdPatchManager_.updateY(pos);
-        }
     }
 
     void HandleKeyDown(StringHash eventType,VariantMap& eventData)
@@ -154,40 +126,19 @@ public:
 
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
     {
-        // HandleAudio();
-        float timeStep = eventData[Update::P_TIMESTEP].GetFloat();
-
-        // Movement speed as world units per second
-        float MOVE_SPEED=10.0f;
-        // Mouse sensitivity as degrees per pixel
-        const float MOUSE_SENSITIVITY=0.1f;
-
-        Input* input=GetSubsystem<Input>();
-        if(input->GetQualifierDown(1))  // 1 is shift, 2 is ctrl, 4 is alt
-            MOVE_SPEED*=10;
-        if(input->GetKeyDown('W'))
-            cameraNode_->Translate(Vector3(0,0, 1)*MOVE_SPEED*timeStep);
-        if(input->GetKeyDown('S'))
-            cameraNode_->Translate(Vector3(0,0,-1)*MOVE_SPEED*timeStep);
-        if(input->GetKeyDown('A'))
-            cameraNode_->Translate(Vector3(-1,0,0)*MOVE_SPEED*timeStep);
-        if(input->GetKeyDown('D'))
-            cameraNode_->Translate(Vector3( 1,0,0)*MOVE_SPEED*timeStep);
-
-        if(!GetSubsystem<Input>()->IsMouseVisible())
-        {
-            // Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp the pitch between -90 and 90 degrees
-            IntVector2 mouseMove = input->GetMouseMove();
-            static float yaw_=0;
-            static float pitch_=0;
-            yaw_ += MOUSE_SENSITIVITY * mouseMove.x_;
-            pitch_ += MOUSE_SENSITIVITY * mouseMove.y_;
-            pitch_ = Clamp(pitch_, -90.0f, 90.0f);
-            // Reset rotation and set yaw and pitch again
-            cameraNode_->SetDirection(Vector3::FORWARD);
-            cameraNode_->Yaw(yaw_);
-            cameraNode_->Pitch(pitch_);
-        }
+        Vector3 cameraPosition = cameraNode_->GetWorldPosition();
+        Vector3 planetPosition = planetComponent->node->GetWorldPosition();
+        /*
+        Vector3 posDiff = cameraPosition - planetPosition;
+        std::cout << cameraPosition.x_ << " " << cameraPosition.y_ << " " << cameraPosition.z_ << std::endl;
+        std::cout << planetPosition.x_ << " " << planetPosition.y_ << " " << planetPosition.z_ << std::endl;
+        std::cout << posDiff.x_ << " " << posDiff.y_ << " " << posDiff.z_ << std::endl;
+        */
+        float ZERO_VOLUME_DISTANCE = 60.0;
+        pdPatchManager_.updateX(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
+        /*
+        pdPatchManager_.updateY(pos);
+        */
     }
 
     void HandleRenderUpdate(StringHash eventType, VariantMap & eventData)

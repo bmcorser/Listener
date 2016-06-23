@@ -48,11 +48,27 @@ void OrbitalCamera::Start()
                 balanceNode = pitchNode->CreateChild("OrbitalCameraBalance");
                 balanceNode->SetPosition(Vector3(0, 0, radius));
 
+    SubscribeToEvent(E_JOYSTICKAXISMOVE, URHO3D_HANDLER(OrbitalCamera, HandleJoystickAxis));
 
 }
 
+void OrbitalCamera::HandleJoystickAxis(StringHash eventType,VariantMap& eventData)
+{
+    using namespace JoystickAxisMove;
+
+    float pos = eventData[P_POSITION].GetFloat();
+
+    if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
+    }
+    if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
+    }
+}
+
+
 void OrbitalCamera::Update(float timeStep)
 {
+
+    const float MOUSE_SENSITIVITY = 0.1f;
     Input* input = GetSubsystem<Input>();
     containerNode->SetPosition(centre.Lerp(target, timeStep));
 
@@ -64,29 +80,24 @@ void OrbitalCamera::Update(float timeStep)
     camera->DrawDebugGeometry(debugRenderer, true);
     debugRenderer->AddLine(cameraPosition, target, Color::GREEN);
     debugRenderer->AddLine(cameraPosition, centre, Color::RED);
-    */
+
+    // below here segfaults not sure why
 
     UI* ui = GetSubsystem<UI>();
     if (ui->GetFocusElement())
         return;
-
-    const float MOUSE_SENSITIVITY = 0.1f;
 
     Cursor* cursor = ui->GetCursor();
     cursor->SetVisible(!input->GetQualifierDown(QUAL_CTRL));
 
     if (!ui->GetCursor()->IsVisible())
     {
+    */
         IntVector2 mouseMove = input->GetMouseMove();
         currentYaw += MOUSE_SENSITIVITY * mouseMove.x_;
         currentPitch += MOUSE_SENSITIVITY * mouseMove.y_;
         currentPitch = Clamp(currentPitch, -90.0f, 90.0f);
         yawNode->SetRotation(Quaternion(currentYaw, Vector3::UP));
         pitchNode->SetRotation(Quaternion(currentPitch, Vector3::RIGHT));
-    }
-}
-
-void OrbitalCamera::SetTargetNode(Node* node) 
-{
-    target = node->GetPosition();
+    // }
 }
