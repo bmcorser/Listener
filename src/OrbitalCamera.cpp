@@ -16,6 +16,9 @@ void OrbitalCamera::RegisterObject(Context* context)
 
 void OrbitalCamera::Start()
 {
+    analogX = 0;
+    analogY = 0;
+
     Node* node = GetNode();
     Scene* scene = GetScene();
     debugRenderer = scene->GetComponent<DebugRenderer>();
@@ -59,14 +62,22 @@ void OrbitalCamera::HandleJoystickAxis(StringHash eventType,VariantMap& eventDat
     float pos = eventData[P_POSITION].GetFloat();
 
     if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
+        analogX = pos;
     }
     if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
+        analogY = pos;
     }
 }
 
 
 void OrbitalCamera::Update(float timeStep)
 {
+    currentYaw += analogX;
+    yawNode->SetRotation(Quaternion(currentYaw, Vector3::UP));
+
+    currentPitch += analogY;
+    currentPitch = Clamp(currentPitch, -90.0f, 90.0f);
+    pitchNode->SetRotation(Quaternion(currentPitch, Vector3::RIGHT));
 
     const float MOUSE_SENSITIVITY = 0.1f;
     Input* input = GetSubsystem<Input>();

@@ -136,6 +136,7 @@ public:
         */
         float ZERO_VOLUME_DISTANCE = 60.0;
         pdPatchManager_.updateX(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
+        pdPatchManager_.updateY(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
         /*
         pdPatchManager_.updateY(pos);
         */
