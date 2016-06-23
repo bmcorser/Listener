@@ -41,7 +41,8 @@ void PlanetComponent::Update(float timeStep)
 
 void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData)
 {
-    // DebugRenderer* debug = node->GetScene()->GetComponent<DebugRenderer>();
+    DebugRenderer* debug = node->GetScene()->GetComponent<DebugRenderer>();
+    debug->AddSphere(Sphere(Vector3(0, 0, 0), 1), Color::RED);
 }
 
 Node* PlanetComponent::place(Vector3 pos)

@@ -16,8 +16,8 @@ void OrbitalCamera::RegisterObject(Context* context)
 
 void OrbitalCamera::Start()
 {
-    analogX = 0;
-    analogY = 0;
+    leftAnalogX = 0;
+    leftAnalogY = 0;
 
     Node* node = GetNode();
     Scene* scene = GetScene();
@@ -62,21 +62,21 @@ void OrbitalCamera::HandleJoystickAxis(StringHash eventType,VariantMap& eventDat
     float pos = eventData[P_POSITION].GetFloat();
 
     if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTX) {
-        analogX = pos;
+        leftAnalogX = pos;
     }
     if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
-        analogY = pos;
+        leftAnalogY = pos;
     }
 }
 
 
 void OrbitalCamera::Update(float timeStep)
 {
-    currentYaw += analogX;
+    currentYaw -= leftAnalogX * 0.2;
     yawNode->SetRotation(Quaternion(currentYaw, Vector3::UP));
 
-    currentPitch += analogY;
-    currentPitch = Clamp(currentPitch, -90.0f, 90.0f);
+    currentPitch -= leftAnalogY * 0.2;
+    // currentPitch = Clamp(currentPitch, -90.0f, 90.0f);
     pitchNode->SetRotation(Quaternion(currentPitch, Vector3::RIGHT));
 
     const float MOUSE_SENSITIVITY = 0.1f;
@@ -87,12 +87,10 @@ void OrbitalCamera::Update(float timeStep)
     cameraPosition = cameraNode->GetWorldPosition();
     centre = containerNode->GetWorldPosition();
 
-    /* can't see this if we're not using the debugViewport
+    /*
     camera->DrawDebugGeometry(debugRenderer, true);
     debugRenderer->AddLine(cameraPosition, target, Color::GREEN);
     debugRenderer->AddLine(cameraPosition, centre, Color::RED);
-
-    // below here segfaults not sure why
 
     UI* ui = GetSubsystem<UI>();
     if (ui->GetFocusElement())
@@ -103,12 +101,12 @@ void OrbitalCamera::Update(float timeStep)
 
     if (!ui->GetCursor()->IsVisible())
     {
-    */
         IntVector2 mouseMove = input->GetMouseMove();
         currentYaw += MOUSE_SENSITIVITY * mouseMove.x_;
         currentPitch += MOUSE_SENSITIVITY * mouseMove.y_;
         currentPitch = Clamp(currentPitch, -90.0f, 90.0f);
         yawNode->SetRotation(Quaternion(currentYaw, Vector3::UP));
         pitchNode->SetRotation(Quaternion(currentPitch, Vector3::RIGHT));
-    // }
+    }
+    */
 }

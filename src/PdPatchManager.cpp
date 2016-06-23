@@ -25,10 +25,12 @@ class PdPatchManager
 
     public:
     void init (int sampleRate, unsigned int bufferFrames) {
+
         if(rtAudio.getDeviceCount() == 0){
             std::cout << "There are no available sound devices." << std::endl;
             exit(1);
         }
+
         RtAudio::StreamParameters parameters;
         parameters.deviceId = rtAudio.getDefaultOutputDevice();
         parameters.nChannels = 2;
@@ -36,9 +38,11 @@ class PdPatchManager
         RtAudio::StreamOptions options;
         options.streamName = "planets";
         options.flags = RTAUDIO_SCHEDULE_REALTIME;
+
         if (rtAudio.getCurrentApi() != RtAudio::MACOSX_CORE) {
             options.flags |= RTAUDIO_MINIMIZE_LATENCY; // CoreAudio doesn't seem to like this
         }
+
         rtAudio.openStream(
             &parameters,
             NULL,

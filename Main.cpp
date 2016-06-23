@@ -79,7 +79,7 @@ public:
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
         /* PlanetComponent* */ planetComponent = scene_->CreateComponent<PlanetComponent>();
-        planetComponent->place(Vector3(0, 2, 15));
+        planetComponent->place(Vector3(0, 2, 30));
 
         Node* lightNode=scene_->CreateChild();
         lightNode->SetDirection(Vector3::FORWARD);
@@ -113,15 +113,12 @@ public:
     void HandleKeyDown(StringHash eventType,VariantMap& eventData)
     {
         using namespace KeyDown;
+
         int key=eventData[P_KEY].GetInt();
-        if(key==KEY_ESCAPE)
+
+        if(key == KEY_ESCAPE)
             engine_->Exit();
 
-        if(key==KEY_TAB)    // toggle mouse cursor when pressing tab
-        {
-            GetSubsystem<Input>()->SetMouseVisible(!GetSubsystem<Input>()->IsMouseVisible());
-            GetSubsystem<Input>()->SetMouseGrabbed(!GetSubsystem<Input>()->IsMouseGrabbed());
-        }
     }
 
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
@@ -134,9 +131,8 @@ public:
         std::cout << planetPosition.x_ << " " << planetPosition.y_ << " " << planetPosition.z_ << std::endl;
         std::cout << posDiff.x_ << " " << posDiff.y_ << " " << posDiff.z_ << std::endl;
         */
-        float ZERO_VOLUME_DISTANCE = 60.0;
+        float ZERO_VOLUME_DISTANCE = 30.0;
         pdPatchManager_.updateX(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
-        pdPatchManager_.updateY(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
         /*
         pdPatchManager_.updateY(pos);
         */

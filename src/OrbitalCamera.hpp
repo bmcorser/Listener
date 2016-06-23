@@ -28,8 +28,8 @@ public:
 
     SharedPtr<Camera> camera;
     Vector3 target;
-    float analogX;
-    float analogY;
+    float leftAnalogX;
+    float leftAnalogY;
 
     SharedPtr<Node> containerNode;
     SharedPtr<Node> yawNode;
