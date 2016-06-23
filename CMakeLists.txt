@@ -78,5 +78,5 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 )
 
-include_directories(${RTAUDIO_ROOT}/src/rtaudio-4.1.2)
-target_link_libraries(${TARGET_NAME} ${RTAUDIO_ROOT}/src/rtaudio-4.1.2/.libs/librtaudio.a)
+include_directories(${RTAUDIO_ROOT}/src/rtaudio_external)
+target_link_libraries(${TARGET_NAME} ${RTAUDIO_ROOT}/src/rtaudio_external-build/librtaudio_static.a)
