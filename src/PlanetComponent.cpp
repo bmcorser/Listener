@@ -48,8 +48,6 @@ Node* PlanetComponent::place(Vector3 pos)
 {
     node = scene->CreateChild("Planet");
     node->SetPosition(pos);
-    /*
-    */
     node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
     node->SetScale(2.0f + Random(15));
 
@@ -80,28 +78,26 @@ Node* PlanetComponent::place(Vector3 pos)
         cg->AddPoint(vertices[i]);
     }
 
-    cg->AddTriangle(0, 1, 2, false);
-    cg->AddTriangle(1, 2, 3, true);
-    cg->AddTriangle(3, 4, 5, true);
-    cg->AddTriangle(3, 8, 4, true);
-    cg->AddTriangle(0, 6, 7, true);
-    cg->AddTriangle(0, 9, 6, true);
-    cg->AddTriangle(4, 10, 11, true);
-    cg->AddTriangle(6, 11, 10, true);
-    cg->AddTriangle(2, 5, 9, true);
-    cg->AddTriangle(11, 9, 5, true);
-    cg->AddTriangle(1, 7, 8, true);
-    cg->AddTriangle(10, 8, 7, true);
-    cg->AddTriangle(3, 5, 2, true);
-    cg->AddTriangle(3, 1, 8, true);
-    cg->AddTriangle(0, 2, 9, true);
-    cg->AddTriangle(0, 7, 1, true);
-    cg->AddTriangle(6, 9, 11, true);
-    cg->AddTriangle(6, 10, 7, true);
-    cg->AddTriangle(4, 11, 5, true);
-    cg->AddTriangle(4, 8, 10, true);
-    /*
-    */
+    cg->AddTriangle(2, 1, 0, true);
+    cg->AddTriangle(3, 1, 2, true);
+    cg->AddTriangle(8, 3, 4, true);
+    cg->AddTriangle(6, 0, 7, true);
+    cg->AddTriangle(11, 6, 10, true);
+    cg->AddTriangle(4, 11, 10, true);
+    cg->AddTriangle(9, 0, 6, true);
+    cg->AddTriangle(10, 7, 8, true);
+    cg->AddTriangle(5, 2, 9, true);
+    cg->AddTriangle(4, 3, 5, true);
+    cg->AddTriangle(3, 2, 5, true);
+    cg->AddTriangle(7, 1, 8, true);
+    cg->AddTriangle(8, 1, 3, true);
+    cg->AddTriangle(2, 0, 9, true);
+    cg->AddTriangle(7, 0, 1, true);
+    cg->AddTriangle(9, 11, 5, true);
+    cg->AddTriangle(9, 6, 11, true);
+    cg->AddTriangle(10, 6, 7, true);
+    cg->AddTriangle(11, 4, 5, true);
+    cg->AddTriangle(8, 4, 10, true);
 
     cg->Build(node, false, false, 32, 63);
 
