@@ -103,7 +103,7 @@ Node* PlanetComponent::place(Vector3 pos)
     cg->AddTriangle(4, 11, 5, true);
     cg->AddTriangle(4, 8, 10, true);
 
-    cg->Build(node, false, false, 32, 63);
+    cg->Build(node, false, true, 32, 63);
 
     /*
     Material* material = new Material(context_);
