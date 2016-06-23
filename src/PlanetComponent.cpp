@@ -3,6 +3,7 @@
 PlanetComponent::PlanetComponent(Context* context) : LogicComponent(context)
 {
     SetUpdateEventMask(USE_FIXEDUPDATE | USE_UPDATE);
+    SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(PlanetComponent, HandlePostRenderUpdate));
 }
 
 void PlanetComponent::RegisterObject(Context* context)
@@ -38,52 +39,49 @@ void PlanetComponent::Update(float timeStep)
 {
 }
 
+void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData)
+{
+    // DebugRenderer* debug = node->GetScene()->GetComponent<DebugRenderer>();
+}
+
 Node* PlanetComponent::place(Vector3 pos)
 {
-    Node* node = scene->CreateChild("Planet");
+    node = scene->CreateChild("Planet");
     node->SetPosition(pos);
     /*
+    */
     node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
     node->SetScale(2.0f + Random(15));
-    */
-    node->SetScale(15);
 
     CustomGeo* cg = new CustomGeo(context_);
 
-    float phi = (1 + sqrt(5)) / 2;
-    float a = 1 / 2;
-    float b = 1 / (2 * phi);
-
     // icosahedron
-    Vector3 v1  = Vector3( 0,  b, -a);
-    Vector3 v2  = Vector3( b,  a,  0);
-    Vector3 v3  = Vector3(-b,  a,  0);
-    Vector3 v4  = Vector3( 0,  b,  a);
-    Vector3 v5  = Vector3( 0, -b,  a);
-    Vector3 v6  = Vector3(-a,  0,  b);
-    Vector3 v7  = Vector3( 0, -b, -a);
-    Vector3 v8  = Vector3( a,  0, -b);
-    Vector3 v9  = Vector3( a,  0,  b);
-    Vector3 v10 = Vector3(-a,  0, -b);
-    Vector3 v11 = Vector3( b, -a,  0);
-    Vector3 v12 = Vector3(-b, -a,  0);
+    float phi = (1.0 + sqrt(5.0)) / 2.0;
+    float a = 1.0 / 2.0;
+    float b = 1.0 / (2.0 * phi);
 
-    cg->AddPoint(v1 );
-    cg->AddPoint(v2 );
-    cg->AddPoint(v3 );
-    cg->AddPoint(v4 );
-    cg->AddPoint(v5 );
-    cg->AddPoint(v6 );
-    cg->AddPoint(v7 );
-    cg->AddPoint(v8 );
-    cg->AddPoint(v9 );
-    cg->AddPoint(v10);
-    cg->AddPoint(v11);
-    cg->AddPoint(v12);
+    Vector3 vertices[] = {
+        Vector3( 0,  b, -a),
+        Vector3( b,  a,  0),
+        Vector3(-b,  a,  0),
+        Vector3( 0,  b,  a),
+        Vector3( 0, -b,  a),
+        Vector3(-a,  0,  b),
+        Vector3( 0, -b, -a),
+        Vector3( a,  0, -b),
+        Vector3( a,  0,  b),
+        Vector3(-a,  0, -b),
+        Vector3( b, -a,  0),
+        Vector3(-b, -a,  0),
+    };
 
-    // draw the icosahedron's 20 triangular faces:
-    cg->AddTriangle(0, 1, 2, true);
-    cg->AddTriangle(3, 2, 1, true);
+    for (unsigned i = 0; i < 12; i += 1)
+    {
+        cg->AddPoint(vertices[i]);
+    }
+
+    cg->AddTriangle(0, 1, 2, false);
+    cg->AddTriangle(1, 2, 3, true);
     cg->AddTriangle(3, 4, 5, true);
     cg->AddTriangle(3, 8, 4, true);
     cg->AddTriangle(0, 6, 7, true);
@@ -102,8 +100,10 @@ Node* PlanetComponent::place(Vector3 pos)
     cg->AddTriangle(6, 10, 7, true);
     cg->AddTriangle(4, 11, 5, true);
     cg->AddTriangle(4, 8, 10, true);
+    /*
+    */
 
-    cg->Build(node, false, true, 32, 63);
+    cg->Build(node, false, false, 32, 63);
 
     /*
     Material* material = new Material(context_);

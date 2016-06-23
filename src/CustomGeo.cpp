@@ -27,7 +27,7 @@ CustomGeo::~CustomGeo(){}
 void CustomGeo::AddPoint(const Vector3 p)
 {
     points_.Push(p);
-    FitBB(p);
+    // FitBB(p);
     //add empty value to shared_normals_ids
     shared_normal_ids_.Push(PODVector<unsigned>());
 }
@@ -278,6 +278,7 @@ Vector3 CustomGeo::Normal(const Vector3& p1, const Vector3& p2, const Vector3& p
             Vector3 edge2 = p1 - p3;
     return edge1.CrossProduct(edge2).Normalized();
 }
+
 Vector3 CustomGeo::GetSmoothNormal(const unsigned i)
 {
     Vector3 avg;

@@ -79,8 +79,8 @@ public:
 
         PlanetComponent* planetComponent = scene_->CreateComponent<PlanetComponent>();
         planetComponent->place(Vector3(0, 2, 15));
+        // SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(PlanetComponent, HandlePostRenderUpdate));
 
-        /*
         Node* sphereNode = scene_->CreateChild("Sphere");
         sphereNode->SetPosition(Vector3(0,2,15));
         sphereNode->SetScale(Vector3(3,3,3));
@@ -88,6 +88,7 @@ public:
         sphereModel->SetModel(resourceCache_->GetResource<Model>("Models/Sphere.mdl"));
         // boxObject->SetMaterial(resourceCache_->GetResource<Material>("Materials/DefaultMaterial.xml"));
         sphereModel->SetCastShadows(true);
+        /*
         */
 
         Node* lightNode=scene_->CreateChild();

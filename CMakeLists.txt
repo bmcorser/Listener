@@ -1,4 +1,4 @@
-set(CMAKE_CXXFLAGS "-Wc++11-extensions")
+set(CMAKE_CXXFLAGS "-Wc++11-extensions -std=c++11")
 
 include(ExternalProject)
 # Set CMake minimum version and CMake policy required by Urho3D-CMake-common module
