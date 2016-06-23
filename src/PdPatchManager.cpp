@@ -16,7 +16,7 @@ int audioCallback(
     void *userData
 ){
    int ticks = nBufferFrames / 64;
-   // libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
+   libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
    return 0;
 }
 
