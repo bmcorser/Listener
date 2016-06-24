@@ -29,9 +29,24 @@ public:
 
 private:
 
-    SharedPtr<DebugRenderer> debugRenderer;
-    SharedPtr<Node> rootNode;
-    SharedPtr<Scene> scene;
-    Color colours[17];
+    Color colours[17] = {
+        Color(0, 31, 63),
+        Color(0, 116, 217),
+        Color(127, 219, 255),
+        Color(57, 219, 255),
+        Color(57, 204, 204),
+        Color(61, 153, 112),
+        Color(46, 204, 64),
+        Color(1, 255, 112),
+        Color(255, 220, 0),
+        Color(255, 133, 27),
+        Color(255, 65, 54),
+        Color(133, 20, 75),
+        Color(240, 18, 190),
+        Color(177, 13, 201),
+        Color(17, 17, 17),
+        Color(170, 170, 170),
+        Color(221, 221, 221),
+    };
 
 };

@@ -2,12 +2,14 @@ struct Tetrahedron : public PlatonicSolid
 {
     Tetrahedron()
     {
-        vertices  = {
+        vertices = {
             -1,  1, -1,
             -1, -1,  1,
              1,  1,  1,
              1, -1, -1,
         };
+        for(auto& v: vertices)
+            v = v / 2;
         triangles = {
             2, 3, 0,
             1, 0, 3,
