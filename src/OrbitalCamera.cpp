@@ -18,6 +18,7 @@ void OrbitalCamera::Start()
 {
     leftAnalogX = 0;
     leftAnalogY = 0;
+    rightAnalogY = 0;
 
     Node* node = GetNode();
     Scene* scene = GetScene();
@@ -67,6 +68,9 @@ void OrbitalCamera::HandleJoystickAxis(StringHash eventType,VariantMap& eventDat
     if (eventData[P_AXIS] == CONTROLLER_AXIS_LEFTY) {
         leftAnalogY = pos;
     }
+    if (eventData[P_AXIS] == CONTROLLER_AXIS_RIGHTY) {
+        rightAnalogY = pos;
+    }
 }
 
 
@@ -86,6 +90,8 @@ void OrbitalCamera::Update(float timeStep)
     // Update class
     cameraPosition = cameraNode->GetWorldPosition();
     centre = containerNode->GetWorldPosition();
+    radius -= rightAnalogY;
+    cameraNode->SetPosition(Vector3(0.0f, 0.0f, radius));
 
     /*
     camera->DrawDebugGeometry(debugRenderer, true);

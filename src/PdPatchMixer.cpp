@@ -4,7 +4,7 @@
 using namespace Urho3D;
 using namespace pd;
 
-const float ZERO_VOLUME_DISTANCE = 80.0;
+const float ZERO_VOLUME_DISTANCE = 100.0;
 
 int audioCallback(
     void *outputBuffer,

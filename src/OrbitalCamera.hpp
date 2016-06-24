@@ -30,6 +30,7 @@ public:
     Vector3 target;
     float leftAnalogX;
     float leftAnalogY;
+    float rightAnalogY;
 
     SharedPtr<Node> containerNode;
     SharedPtr<Node> yawNode;
