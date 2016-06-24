@@ -21,8 +21,13 @@
 CustomGeo::CustomGeo(Context* context):
     Object(context)
 {
+    SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(CustomGeo, HandlePostRenderUpdate));
 }
 CustomGeo::~CustomGeo(){}
+
+void CustomGeo::HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData)
+{
+}
 
 void CustomGeo::AddPoint(const Vector3 p)
 {

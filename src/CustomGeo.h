@@ -22,6 +22,7 @@ public:
     void AddPointColor(const Vector3 c);
     //PODVector<Vector3>* GetPoints(){return &points_;};
     //void SetPoint(const unsigned short i, const Vector3 p);
+    void HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData);
 
     void AddTriangle(const unsigned p1, const unsigned p2, const unsigned p3, const bool t=false);//t is to calc tangents
     void Surface(const unsigned slices, const unsigned stacks, Vector3 (CustomGeo::*fptr)(void*, float, float), void* context);

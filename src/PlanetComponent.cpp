@@ -54,7 +54,7 @@ Node* PlanetComponent::place(Vector3 pos)
     node = GetScene()->CreateChild("Planet");
     node->SetPosition(pos);
     node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
-    node->SetScale(15);
+    node->SetScale(7);
 
 
     std::random_device rd;

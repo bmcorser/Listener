@@ -84,8 +84,7 @@ public:
         std::random_device rd;
         std::mt19937 rng(rd());
         std::uniform_real_distribution<float> position_dist(-100, 100);
-
-        for (unsigned i = 0; i < 30; i += 1)
+        for (unsigned i = 0; i < 100; i += 1)
         {
             PlanetComponent* planetComponent = scene_->CreateComponent<PlanetComponent>();
             planetComponent->place(Vector3(position_dist(rng), position_dist(rng), position_dist(rng)));
@@ -100,18 +99,16 @@ public:
             light->SetLightType(LIGHT_DIRECTIONAL);
             light->SetBrightness(0.8);
             light->SetColor(Color(1.0,.6,0.3,1));
-            light->SetCastShadows(true);
         }
         {
             Node* lightNode = scene_->CreateChild();
             lightNode->SetDirection(Vector3::FORWARD);
-            lightNode->Yaw(-50);     // horizontal
-            lightNode->Pitch(-10);   // vertical
+            lightNode->Yaw(120);     // horizontal
+            lightNode->Pitch(170);   // vertical
             Light* light=lightNode->CreateComponent<Light>();
             light->SetLightType(LIGHT_DIRECTIONAL);
             light->SetBrightness(0.8);
-            light->SetColor(Color(1.0,.6,0.3,1));
-            light->SetCastShadows(true);
+            light->SetColor(Color(0.1,.6,0.3,1));
         }
 
         Node* orbitalCameraNode = scene_->CreateChild("CameraRoot");
@@ -120,6 +117,7 @@ public:
         cameraNode_ = orbitalCamera->cameraNode;
 
         Renderer* renderer = GetSubsystem<Renderer>();
+        renderer->DrawDebugGeometry(true);
         SharedPtr<Viewport> viewport(new Viewport(context_, scene_, orbitalCamera->camera));
         renderer->SetViewport(0,viewport);
 
