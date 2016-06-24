@@ -35,6 +35,7 @@ void PlanetComponent::Update(float timeStep)
 
 void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData)
 {
+    /* doesn't work any more, due to random rotation
     DebugRenderer* debug = node->GetScene()->GetComponent<DebugRenderer>();
     for (unsigned i = 0; i < polyhedron.vertices.size(); i += 3)
     {
@@ -45,6 +46,7 @@ void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & 
         );
         debug->AddSphere(Sphere(pos, 0.2), Color::RED);
     }
+    */
 
 }
 

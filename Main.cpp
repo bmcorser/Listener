@@ -44,7 +44,6 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
-    SharedPtr<PlanetComponent> planetComponent;
     PdPatchManager pdPatchManager_;
 
     ListenerApp(Context * context) : Application(context)
@@ -59,8 +58,12 @@ public:
 
         engineParameters_["FullScreen"] = false;
 
+        /*
         engineParameters_["WindowWidth"] = 1280;
         engineParameters_["WindowHeight"] = 1024;
+        */
+        engineParameters_["WindowWidth"] = 640;
+        engineParameters_["WindowHeight"] = 480;
         engineParameters_["WindowResizable"] = true;
         engineParameters_["HighDPI"] = true;
     }
@@ -78,18 +81,38 @@ public:
         skybox->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
-        /* PlanetComponent* */ planetComponent = scene_->CreateComponent<PlanetComponent>();
-        planetComponent->place(Vector3(0, 0, 0));
+        std::random_device rd;
+        std::mt19937 rng(rd());
+        std::uniform_real_distribution<float> position_dist(-100, 100);
 
-        Node* lightNode=scene_->CreateChild();
-        lightNode->SetDirection(Vector3::FORWARD);
-        lightNode->Yaw(50);     // horizontal
-        lightNode->Pitch(10);   // vertical
-        Light* light=lightNode->CreateComponent<Light>();
-        light->SetLightType(LIGHT_DIRECTIONAL);
-        light->SetBrightness(1.6);
-        light->SetColor(Color(1.0,.6,0.3,1));
-        light->SetCastShadows(true);
+        for (unsigned i = 0; i < 30; i += 1)
+        {
+            PlanetComponent* planetComponent = scene_->CreateComponent<PlanetComponent>();
+            planetComponent->place(Vector3(position_dist(rng), position_dist(rng), position_dist(rng)));
+        }
+
+        {
+            Node* lightNode = scene_->CreateChild();
+            lightNode->SetDirection(Vector3::FORWARD);
+            lightNode->Yaw(50);     // horizontal
+            lightNode->Pitch(10);   // vertical
+            Light* light=lightNode->CreateComponent<Light>();
+            light->SetLightType(LIGHT_DIRECTIONAL);
+            light->SetBrightness(0.8);
+            light->SetColor(Color(1.0,.6,0.3,1));
+            light->SetCastShadows(true);
+        }
+        {
+            Node* lightNode = scene_->CreateChild();
+            lightNode->SetDirection(Vector3::FORWARD);
+            lightNode->Yaw(-50);     // horizontal
+            lightNode->Pitch(-10);   // vertical
+            Light* light=lightNode->CreateComponent<Light>();
+            light->SetLightType(LIGHT_DIRECTIONAL);
+            light->SetBrightness(0.8);
+            light->SetColor(Color(1.0,.6,0.3,1));
+            light->SetCastShadows(true);
+        }
 
         Node* orbitalCameraNode = scene_->CreateChild("CameraRoot");
         OrbitalCamera* orbitalCamera = orbitalCameraNode->CreateComponent<OrbitalCamera>();
@@ -123,18 +146,16 @@ public:
 
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
     {
+        /*
         Vector3 cameraPosition = cameraNode_->GetWorldPosition();
         Vector3 planetPosition = planetComponent->node->GetWorldPosition();
-        /*
         Vector3 posDiff = cameraPosition - planetPosition;
         std::cout << cameraPosition.x_ << " " << cameraPosition.y_ << " " << cameraPosition.z_ << std::endl;
         std::cout << planetPosition.x_ << " " << planetPosition.y_ << " " << planetPosition.z_ << std::endl;
         std::cout << posDiff.x_ << " " << posDiff.y_ << " " << posDiff.z_ << std::endl;
-        */
         float ZERO_VOLUME_DISTANCE = 30.0;
         pdPatchManager_.updateX(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
         pdPatchManager_.updateY(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
-        /*
         pdPatchManager_.updateY(pos);
         */
     }
