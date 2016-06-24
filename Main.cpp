@@ -60,9 +60,9 @@ public:
         engineParameters_["FullScreen"] = false;
 
         engineParameters_["WindowWidth"] = 1280;
-        engineParameters_["WindowHeight"] = 720;
+        engineParameters_["WindowHeight"] = 1024;
         engineParameters_["WindowResizable"] = true;
-        // engineParameters_["HighDPI"] = true;
+        engineParameters_["HighDPI"] = true;
     }
 
     virtual void Start()
@@ -79,7 +79,7 @@ public:
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
 
         /* PlanetComponent* */ planetComponent = scene_->CreateComponent<PlanetComponent>();
-        planetComponent->place(Vector3(0, 2, 30));
+        planetComponent->place(Vector3(0, 0, 0));
 
         Node* lightNode=scene_->CreateChild();
         lightNode->SetDirection(Vector3::FORWARD);
@@ -133,6 +133,7 @@ public:
         */
         float ZERO_VOLUME_DISTANCE = 30.0;
         pdPatchManager_.updateX(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
+        pdPatchManager_.updateY(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
         /*
         pdPatchManager_.updateY(pos);
         */

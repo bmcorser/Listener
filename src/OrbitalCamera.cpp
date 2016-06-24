@@ -72,10 +72,10 @@ void OrbitalCamera::HandleJoystickAxis(StringHash eventType,VariantMap& eventDat
 
 void OrbitalCamera::Update(float timeStep)
 {
-    currentYaw -= leftAnalogX * 0.2;
+    currentYaw -= leftAnalogX;
     yawNode->SetRotation(Quaternion(currentYaw, Vector3::UP));
 
-    currentPitch -= leftAnalogY * 0.2;
+    currentPitch -= leftAnalogY;
     // currentPitch = Clamp(currentPitch, -90.0f, 90.0f);
     pitchNode->SetRotation(Quaternion(currentPitch, Vector3::RIGHT));
 

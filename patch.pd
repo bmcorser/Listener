@@ -1,6 +1,6 @@
 #N canvas 0 23 1234 730 10;
 #X obj 819 657 dac~;
-#X obj 609 483 osc~ 220;
+#X obj 609 483 osc~ 440;
 #X obj 541 406 r y-axis;
 #N canvas 435 61 833 588 pan 0;
 #X obj 225 193 sin;

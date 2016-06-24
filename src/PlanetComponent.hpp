@@ -2,6 +2,7 @@
 
 #include "CustomGeo.cpp"
 #include <Urho3D/Graphics/Geometry.h>
+#include "polyhedra/container.cpp"
 
 using namespace Urho3D;
 
@@ -24,6 +25,7 @@ public:
     Node* place(Vector3 pos);
     Node* node;
     CustomGeo* cg;
+    PlatonicSolid polyhedron;
 
 private:
 

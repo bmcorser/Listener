@@ -1,4 +1,18 @@
 #include "PlanetComponent.hpp"
+#include "polyhedra/tetrahedron.cpp"
+#include "polyhedra/octahedron.cpp"
+#include "polyhedra/icosahedron.cpp"
+
+
+template<typename T, int sz>
+int size(T(&)[sz])
+{
+    return sz;
+}
+
+enum class polyhedra_t : int { tetrahedron, octahedron, icosahedron};
+const int polyhedra_max_t = 3;
+
 
 PlanetComponent::PlanetComponent(Context* context) : LogicComponent(context)
 {
@@ -41,64 +55,72 @@ void PlanetComponent::Update(float timeStep)
 
 void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData)
 {
+    /*
     DebugRenderer* debug = node->GetScene()->GetComponent<DebugRenderer>();
-    debug->AddSphere(Sphere(Vector3(0, 0, 0), 1), Color::RED);
+    for (unsigned i = 0; i < size(polyhedron.vertices); i += 3)
+    {
+        Vector3 pos = Vector3(
+            polyhedron.vertices[i] * 15,
+            polyhedron.vertices[i + 1] * 15,
+            polyhedron.vertices[i + 2] * 15
+        );
+        debug->AddSphere(Sphere(pos, 0.2), Color::RED);
+    }
+    */
+
 }
+
 
 Node* PlanetComponent::place(Vector3 pos)
 {
     node = scene->CreateChild("Planet");
     node->SetPosition(pos);
-    node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
-    node->SetScale(2.0f + Random(15));
+    // node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
+    node->SetScale(15);
+
+    static default_random_engine e;
+    static uniform_int_distribution<int> d(1, polyhedra_max_t);
+    polyhedra_t solid_name = static_cast<polyhedra_t>(d(e));
+
+    switch(solid_name)
+    {
+    case polyhedra_t::tetrahedron:
+        polyhedron = Tetrahedron();
+        break;
+
+    case polyhedra_t::octahedron:
+        polyhedron = Octahedron();
+        break;
+
+    case polyhedra_t::icosahedron:
+        polyhedron = Icosahedron();
+        break;
+    }
 
     CustomGeo* cg = new CustomGeo(context_);
 
-    // icosahedron
-    float phi = (1.0 + sqrt(5.0)) / 2.0;
-    float a = 1.0 / 2.0;
-    float b = 1.0 / (2.0 * phi);
 
-    Vector3 vertices[] = {
-        Vector3( 0,  b, -a),
-        Vector3( b,  a,  0),
-        Vector3(-b,  a,  0),
-        Vector3( 0,  b,  a),
-        Vector3( 0, -b,  a),
-        Vector3(-a,  0,  b),
-        Vector3( 0, -b, -a),
-        Vector3( a,  0, -b),
-        Vector3( a,  0,  b),
-        Vector3(-a,  0, -b),
-        Vector3( b, -a,  0),
-        Vector3(-b, -a,  0),
-    };
-
-    for (unsigned i = 0; i < 12; i += 1)
+    for (unsigned i = 0; i < polyhedron.vertices.size(); i += 3)
     {
-        cg->AddPoint(vertices[i]);
+        cg->AddPoint(
+            Vector3(
+                polyhedron.vertices[i],
+                polyhedron.vertices[i + 1],
+                polyhedron.vertices[i + 2]
+            )
+        );
     }
 
-    cg->AddTriangle(2, 1, 0, true);
-    cg->AddTriangle(3, 1, 2, true);
-    cg->AddTriangle(8, 3, 4, true);
-    cg->AddTriangle(6, 0, 7, true);
-    cg->AddTriangle(11, 6, 10, true);
-    cg->AddTriangle(4, 11, 10, true);
-    cg->AddTriangle(9, 0, 6, true);
-    cg->AddTriangle(10, 7, 8, true);
-    cg->AddTriangle(5, 2, 9, true);
-    cg->AddTriangle(4, 3, 5, true);
-    cg->AddTriangle(3, 2, 5, true);
-    cg->AddTriangle(7, 1, 8, true);
-    cg->AddTriangle(8, 1, 3, true);
-    cg->AddTriangle(2, 0, 9, true);
-    cg->AddTriangle(7, 0, 1, true);
-    cg->AddTriangle(9, 11, 5, true);
-    cg->AddTriangle(9, 6, 11, true);
-    cg->AddTriangle(10, 6, 7, true);
-    cg->AddTriangle(11, 4, 5, true);
-    cg->AddTriangle(8, 4, 10, true);
+    for (unsigned i = 0; i < polyhedron.triangles.size(); i += 3)
+    {
+        cg->AddTriangle(
+            polyhedron.triangles[i],
+            polyhedron.triangles[i + 1],
+            polyhedron.triangles[i + 2],
+            false
+        );
+    }
+
 
     cg->Build(node, false, false, 32, 63);
 
