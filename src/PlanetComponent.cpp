@@ -51,14 +51,16 @@ void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & 
 
 Node* PlanetComponent::place(Vector3 pos)
 {
+    std::random_device rd;
+    std::mt19937 rng(rd());
+
     node = GetScene()->CreateChild("Planet");
     node->SetPosition(pos);
     node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
-    node->SetScale(7);
+    std::uniform_int_distribution<int> scale_dist(7, 15);
+    node->SetScale(scale_dist(rng));
 
 
-    std::random_device rd;
-    std::mt19937 rng(rd());
     std::uniform_int_distribution<int> uni(0, polyhedra_max_t);
 
     polyhedra_t solid_name = static_cast<polyhedra_t>(uni(rng));

@@ -65,11 +65,13 @@ public:
         engineParameters_["WindowWidth"] = 640;
         engineParameters_["WindowHeight"] = 480;
         engineParameters_["WindowResizable"] = true;
-        engineParameters_["HighDPI"] = true;
+        // engineParameters_["HighDPI"] = true;
     }
 
     virtual void Start()
     {
+        GetSubsystem<Input>()->SetMouseGrabbed(true);
+        GetSubsystem<Input>()->SetMouseVisible(false);
         ResourceCache* resourceCache_ = GetSubsystem<ResourceCache>();
 
         scene_ = new Scene(context_);
@@ -113,16 +115,22 @@ public:
 
         Node* orbitalCameraNode = scene_->CreateChild("CameraRoot");
         OrbitalCamera* orbitalCamera = orbitalCameraNode->CreateComponent<OrbitalCamera>();
-        orbitalCamera->SetTargetPos(Vector3(0, 0, 0));
         cameraNode_ = orbitalCamera->cameraNode;
+        orbitalCamera->SetTargetPos(Vector3(0, 0, 0));
+
+        cameraNode_ = scene_->CreateChild("Camera");
+        Camera* debugCamera = cameraNode_->CreateComponent<Camera>();
+        debugCamera->SetFarClip(2000);
 
         Renderer* renderer = GetSubsystem<Renderer>();
         renderer->DrawDebugGeometry(true);
-        SharedPtr<Viewport> viewport(new Viewport(context_, scene_, orbitalCamera->camera));
+        // SharedPtr<Viewport> viewport(new Viewport(context_, scene_, orbitalCamera->camera));
+        SharedPtr<Viewport> viewport(new Viewport(context_, scene_, debugCamera));
         renderer->SetViewport(0,viewport);
 
         SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ListenerApp, HandleKeyDown));
         SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(ListenerApp, HandleUpdate));
+        SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(ListenerApp, DebugHandleUpdate));
         SubscribeToEvent(E_RENDERUPDATE, URHO3D_HANDLER(ListenerApp, HandleRenderUpdate));
         SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(ListenerApp, HandlePostRenderUpdate));
     }
@@ -156,6 +164,35 @@ public:
         pdPatchManager_.updateY(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
         pdPatchManager_.updateY(pos);
         */
+    }
+
+    void DebugHandleUpdate(StringHash eventType,VariantMap& eventData)
+    {
+        float timeStep = eventData[Update::P_TIMESTEP].GetFloat();
+        float MOVE_SPEED = 40.0f;
+        const float MOUSE_SENSITIVITY = 0.1f;
+        Input* input=GetSubsystem<Input>();
+        if(input->GetQualifierDown(1))  // 1 is shift, 2 is ctrl, 4 is alt
+            MOVE_SPEED*=10;
+        if(input->GetKeyDown('W'))
+            cameraNode_->Translate(Vector3(0,0, 1)*MOVE_SPEED*timeStep);
+        if(input->GetKeyDown('S'))
+            cameraNode_->Translate(Vector3(0,0,-1)*MOVE_SPEED*timeStep);
+        if(input->GetKeyDown('A'))
+            cameraNode_->Translate(Vector3(-1,0,0)*MOVE_SPEED*timeStep);
+        if(input->GetKeyDown('D'))
+            cameraNode_->Translate(Vector3( 1,0,0)*MOVE_SPEED*timeStep);
+
+        IntVector2 mouseMove=input->GetMouseMove();
+        static float yaw_=0;
+        static float pitch_=0;
+        yaw_+=MOUSE_SENSITIVITY*mouseMove.x_;
+        pitch_+=MOUSE_SENSITIVITY*mouseMove.y_;
+        pitch_=Clamp(pitch_,-90.0f,90.0f);
+        // Reset rotation and set yaw and pitch again
+        cameraNode_->SetDirection(Vector3::FORWARD);
+        cameraNode_->Yaw(yaw_);
+        cameraNode_->Pitch(pitch_);
     }
 
     void HandleRenderUpdate(StringHash eventType, VariantMap & eventData)
