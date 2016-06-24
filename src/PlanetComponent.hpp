@@ -1,7 +1,8 @@
 #pragma once
 
-#include "CustomGeo.cpp"
 #include <Urho3D/Graphics/Geometry.h>
+#include <Urho3D/Scene/LogicComponent.h>
+#include "CustomGeo.cpp"
 #include "polyhedra/container.cpp"
 
 using namespace Urho3D;
@@ -22,7 +23,7 @@ public:
     virtual void FixedUpdate(float timeStep) {};
     void HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData);
 
-    Node* place(Vector3 pos);
+    Node* place(Vector3 pos, int colour_id, int polyhedron_id, int scale);
     Node* node;
     CustomGeo* cg;
     PlatonicSolid polyhedron;

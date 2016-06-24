@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <stdlib.h>
+#include <random>
 
 #include <Urho3D/Audio/SoundSource.h>
 #include <Urho3D/Core/CoreEvents.h>
@@ -31,9 +32,10 @@
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
 
-#include "src/PdPatchManager.cpp"
+#include "src/PdPatchMixer.cpp"
 #include "src/OrbitalCamera.cpp"
 #include "src/PlanetComponent.cpp"
+#include "src/CustomGeo.h"
 
 using namespace Urho3D;
 
@@ -44,7 +46,7 @@ public:
     SharedPtr<ResourceCache> resourceCache_;
     SharedPtr<Scene> scene_;
     SharedPtr<Node> cameraNode_;
-    PdPatchManager pdPatchManager_;
+    PdPatchMixer pdPatchMixer;
 
     ListenerApp(Context * context) : Application(context)
     {
@@ -54,17 +56,17 @@ public:
 
     virtual void Setup()
     {
-        pdPatchManager_.init(44100, 128);
+        pdPatchMixer.init(44100, 128);
 
         engineParameters_["FullScreen"] = false;
 
-        /*
         engineParameters_["WindowWidth"] = 1280;
         engineParameters_["WindowHeight"] = 1024;
-        */
+        /*
         engineParameters_["WindowWidth"] = 640;
         engineParameters_["WindowHeight"] = 480;
-        engineParameters_["WindowResizable"] = true;
+        */
+        // engineParameters_["WindowResizable"] = true;
         // engineParameters_["HighDPI"] = true;
     }
 
@@ -82,15 +84,6 @@ public:
         Skybox* skybox = skyNode->CreateComponent<Skybox>();
         skybox->SetModel(resourceCache_->GetResource<Model>("Models/Box.mdl"));
         skybox->SetMaterial(resourceCache_->GetResource<Material>("Materials/Skybox.xml"));
-
-        std::random_device rd;
-        std::mt19937 rng(rd());
-        std::uniform_real_distribution<float> position_dist(-100, 100);
-        for (unsigned i = 0; i < 100; i += 1)
-        {
-            PlanetComponent* planetComponent = scene_->CreateComponent<PlanetComponent>();
-            planetComponent->place(Vector3(position_dist(rng), position_dist(rng), position_dist(rng)));
-        }
 
         {
             Node* lightNode = scene_->CreateChild();
@@ -121,6 +114,8 @@ public:
         cameraNode_ = scene_->CreateChild("Camera");
         Camera* debugCamera = cameraNode_->CreateComponent<Camera>();
         debugCamera->SetFarClip(2000);
+        /*
+        */
 
         Renderer* renderer = GetSubsystem<Renderer>();
         renderer->DrawDebugGeometry(true);
@@ -130,9 +125,36 @@ public:
 
         SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ListenerApp, HandleKeyDown));
         SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(ListenerApp, HandleUpdate));
-        SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(ListenerApp, DebugHandleUpdate));
         SubscribeToEvent(E_RENDERUPDATE, URHO3D_HANDLER(ListenerApp, HandleRenderUpdate));
         SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(ListenerApp, HandlePostRenderUpdate));
+
+        std::random_device rd;
+        std::mt19937 rng(rd());
+
+        std::uniform_real_distribution<float> scale_dist(7, 15);
+        std::uniform_int_distribution<int> uni(0, 4);
+        std::uniform_int_distribution<int> colour_dist(0, 16);
+        std::uniform_int_distribution<> position_dist(-100, 100);
+
+
+        // random parts
+
+
+        for (unsigned i = 0; i < 20; i += 1)
+        {
+            int polyhedron_id = uni(rng);
+            int scale = scale_dist(rng);
+            int colour_id = colour_dist(rng);
+            PlanetComponent* planetComponent = scene_->CreateComponent<PlanetComponent>();
+            Vector3 position = Vector3(
+                position_dist(rng),
+                position_dist(rng),
+                position_dist(rng)
+            );
+            planetComponent->place(position, colour_id, polyhedron_id, scale);
+            pdPatchMixer.addPlanet(planetComponent);
+        }
+
     }
 
     virtual void Stop()
@@ -152,18 +174,8 @@ public:
 
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
     {
-        /*
-        Vector3 cameraPosition = cameraNode_->GetWorldPosition();
-        Vector3 planetPosition = planetComponent->node->GetWorldPosition();
-        Vector3 posDiff = cameraPosition - planetPosition;
-        std::cout << cameraPosition.x_ << " " << cameraPosition.y_ << " " << cameraPosition.z_ << std::endl;
-        std::cout << planetPosition.x_ << " " << planetPosition.y_ << " " << planetPosition.z_ << std::endl;
-        std::cout << posDiff.x_ << " " << posDiff.y_ << " " << posDiff.z_ << std::endl;
-        float ZERO_VOLUME_DISTANCE = 30.0;
-        pdPatchManager_.updateX(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
-        pdPatchManager_.updateY(1.0 - ((cameraPosition - planetPosition).Length() / ZERO_VOLUME_DISTANCE));
-        pdPatchManager_.updateY(pos);
-        */
+        pdPatchMixer.update(cameraNode_->GetWorldPosition());
+        DebugHandleUpdate(eventType, eventData);
     }
 
     void DebugHandleUpdate(StringHash eventType,VariantMap& eventData)

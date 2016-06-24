@@ -4,6 +4,7 @@
 #include "polyhedra/hexahedron.cpp"
 #include "polyhedra/icosahedron.cpp"
 #include "polyhedra/dodecahedron.cpp"
+#include "stdlib.h"
 
 
 enum class polyhedra_t: int {
@@ -47,25 +48,16 @@ void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & 
     */
 
 }
-
-
-Node* PlanetComponent::place(Vector3 pos)
+Node* PlanetComponent::place(Vector3 pos, int colour_id, int polyhedron_id, int scale)
 {
-    std::random_device rd;
-    std::mt19937 rng(rd());
 
     node = GetScene()->CreateChild("Planet");
     node->SetPosition(pos);
     node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
-    std::uniform_int_distribution<int> scale_dist(7, 15);
-    node->SetScale(scale_dist(rng));
+    node->SetScale(scale);
 
-
-    std::uniform_int_distribution<int> uni(0, polyhedra_max_t);
-
-    polyhedra_t solid_name = static_cast<polyhedra_t>(uni(rng));
-
-    switch(solid_name)
+    polyhedra_t polyhedron_type = static_cast<polyhedra_t>(polyhedron_id);
+    switch(polyhedron_type)
     {
 
         case polyhedra_t::tetrahedron:
@@ -113,12 +105,10 @@ Node* PlanetComponent::place(Vector3 pos)
         );
     }
 
-
     cg->Build(node, false, false, 32, 63);
 
 
-    std::uniform_int_distribution<int> colour_dist(0, 16);
-    Color colour = colours[colour_dist(rng)];
+    Color colour = colours[colour_id];
     Material* material = new Material(context_);
     material->SetShaderParameter("MatDiffColor", colour.ToVector4() / Vector4(255, 255, 255, 1));
     material->SetShaderParameter("MatSpecColor", colour.ToVector4() / Vector4(255, 255, 255, 1));
