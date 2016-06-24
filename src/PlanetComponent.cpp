@@ -1,17 +1,15 @@
 #include "PlanetComponent.hpp"
 #include "polyhedra/tetrahedron.cpp"
 #include "polyhedra/octahedron.cpp"
+#include "polyhedra/hexahedron.cpp"
 #include "polyhedra/icosahedron.cpp"
+#include "polyhedra/dodecahedron.cpp"
 
 
-template<typename T, int sz>
-int size(T(&)[sz])
-{
-    return sz;
-}
-
-enum class polyhedra_t : int { tetrahedron, octahedron, icosahedron};
-const int polyhedra_max_t = 2;
+enum class polyhedra_t: int {
+    tetrahedron, octahedron, hexahedron, icosahedron, dodecahedron
+};
+const int polyhedra_max_t = 4;
 
 
 PlanetComponent::PlanetComponent(Context* context) : LogicComponent(context)
@@ -35,7 +33,7 @@ void PlanetComponent::Update(float timeStep)
 
 void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData)
 {
-    /* doesn't work any more, due to random rotation
+    /* doesn't work with random rotation
     DebugRenderer* debug = node->GetScene()->GetComponent<DebugRenderer>();
     for (unsigned i = 0; i < polyhedron.vertices.size(); i += 3)
     {
@@ -58,6 +56,7 @@ Node* PlanetComponent::place(Vector3 pos)
     node->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
     node->SetScale(15);
 
+
     std::random_device rd;
     std::mt19937 rng(rd());
     std::uniform_int_distribution<int> uni(0, polyhedra_max_t);
@@ -66,19 +65,27 @@ Node* PlanetComponent::place(Vector3 pos)
 
     switch(solid_name)
     {
-    case polyhedra_t::tetrahedron:
-        polyhedron = Tetrahedron();
-        break;
 
-    case polyhedra_t::octahedron:
-        polyhedron = Octahedron();
-        break;
+        case polyhedra_t::tetrahedron:
+            polyhedron = Tetrahedron();
+            break;
 
-    case polyhedra_t::icosahedron:
-        polyhedron = Icosahedron();
-        break;
-    default:
-        std::cout << "polyhedra_t " << to_string(static_cast<int>(solid_name)) << std::endl;
+        case polyhedra_t::octahedron:
+            polyhedron = Octahedron();
+            break;
+
+        case polyhedra_t::hexahedron:
+            polyhedron = Hexahedron();
+            break;
+
+        case polyhedra_t::icosahedron:
+            polyhedron = Icosahedron();
+            break;
+
+        case polyhedra_t::dodecahedron:
+            polyhedron = Dodecahedron();
+            break;
+
     }
 
     CustomGeo* cg = new CustomGeo(context_);
