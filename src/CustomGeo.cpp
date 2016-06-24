@@ -27,7 +27,7 @@ CustomGeo::~CustomGeo(){}
 void CustomGeo::AddPoint(const Vector3 p)
 {
     points_.Push(p);
-    // FitBB(p);
+    FitBB(p);
     //add empty value to shared_normals_ids
     shared_normal_ids_.Push(PODVector<unsigned>());
 }
