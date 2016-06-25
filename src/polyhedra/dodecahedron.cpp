@@ -82,5 +82,6 @@ struct Dodecahedron : public PlatonicSolid
             14, 13, 16,
 
         };
+        patchName = "dodecahedron.pd";
     }
 };

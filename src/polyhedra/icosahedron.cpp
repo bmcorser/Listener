@@ -43,5 +43,6 @@ struct Icosahedron : public PlatonicSolid
             11, 4,  5,
             8,  4,  10,
         };
+        patchName = "icosahedron.pd";
     }
 };

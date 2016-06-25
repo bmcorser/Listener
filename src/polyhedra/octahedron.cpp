@@ -22,5 +22,6 @@ struct Octahedron : public PlatonicSolid
             4, 3, 5,
             4, 0, 3,
         };
+        patchName = "octahedron.pd";
     }
 };

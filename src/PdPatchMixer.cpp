@@ -15,7 +15,7 @@ int audioCallback(
     void *userData
 ){
     int ticks = nBufferFrames / 64;
-    libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
+    // libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
     return 0;
 }
 
@@ -60,7 +60,7 @@ void PdPatchMixer::init (int sampleRate, unsigned int bufferFrames) {
 }
 
 void PdPatchMixer::addPlanet(PlanetComponent* planet) {
-    Patch patch = libPd.openPatch("patch.pd", "./");
+    Patch patch = libPd.openPatch(planet->polyhedron.patchName, "./patches");
     PlanetPatch planetPatch;
     planetPatch.planet = planet;
     planetPatch.patchId = patch.dollarZero();

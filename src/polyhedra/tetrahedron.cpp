@@ -16,5 +16,6 @@ struct Tetrahedron : public PlatonicSolid
             2, 1, 3,
             2, 0, 1,
         };
+        patchName = "tetrahedron.pd";
     }
 };

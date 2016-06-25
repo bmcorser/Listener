@@ -15,5 +15,6 @@ struct PlatonicSolid
 {
     floats   vertices;
     ints     triangles;
+    string   patchName;
 
 };

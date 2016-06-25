@@ -30,5 +30,6 @@ struct Hexahedron : public PlatonicSolid
             3, 1, 5,
             5, 7, 3,
         };
+        patchName = "hexahedron.pd";
     }
 };
