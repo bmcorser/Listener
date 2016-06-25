@@ -23,10 +23,12 @@ public:
     virtual void FixedUpdate(float timeStep) {};
     void HandlePostRenderUpdate(StringHash eventType, VariantMap & eventData);
 
-    Node* place(Vector3 pos, int colour_id, int polyhedron_id, int scale);
+    Node* place(Vector3 pos, int colour_id, int polyhedron_id, int scale_);
     Node* node;
     CustomGeo* cg;
     PlatonicSolid polyhedron;
+    Color colour;
+    float scale;
 
 private:
 

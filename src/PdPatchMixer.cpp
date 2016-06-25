@@ -61,9 +61,12 @@ void PdPatchMixer::init (int sampleRate, unsigned int bufferFrames) {
 
 void PdPatchMixer::addPlanet(PlanetComponent* planet) {
     Patch patch = libPd.openPatch(planet->polyhedron.patchName, "./patches");
+    int patchId = patch.dollarZero();
+    libPd.sendFloat(std::to_string(patchId) + "-x-axis", 0);
+    libPd.sendFloat(std::to_string(patchId) + "-y-axis", volume);
     PlanetPatch planetPatch;
     planetPatch.planet = planet;
-    planetPatch.patchId = patch.dollarZero();
+    planetPatch.patchId = patchId;
     patches_.Push(planetPatch);
 }
 

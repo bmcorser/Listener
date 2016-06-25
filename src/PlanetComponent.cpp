@@ -48,8 +48,10 @@ void PlanetComponent::HandlePostRenderUpdate(StringHash eventType, VariantMap & 
     */
 
 }
-Node* PlanetComponent::place(Vector3 pos, int colour_id, int polyhedron_id, int scale)
+Node* PlanetComponent::place(Vector3 pos, int colour_id, int polyhedron_id, int scale_)
 {
+    colour = colours[colour_id];
+    scale = scale_;
 
     node = GetScene()->CreateChild("Planet");
     node->SetPosition(pos);
@@ -108,7 +110,6 @@ Node* PlanetComponent::place(Vector3 pos, int colour_id, int polyhedron_id, int 
     cg->Build(node, false, false, 32, 63);
 
 
-    Color colour = colours[colour_id];
     Material* material = new Material(context_);
     material->SetShaderParameter("MatDiffColor", colour.ToVector4() / Vector4(255, 255, 255, 1));
     material->SetShaderParameter("MatSpecColor", colour.ToVector4() / Vector4(255, 255, 255, 1));
