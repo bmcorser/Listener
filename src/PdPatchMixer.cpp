@@ -15,7 +15,7 @@ int audioCallback(
     void *userData
 ){
     int ticks = nBufferFrames / 64;
-    // libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
+    libPd.processFloat(ticks, (float *)inputBuffer, (float*)outputBuffer);
     return 0;
 }
 
@@ -62,8 +62,6 @@ void PdPatchMixer::init (int sampleRate, unsigned int bufferFrames) {
 void PdPatchMixer::addPlanet(PlanetComponent* planet) {
     Patch patch = libPd.openPatch(planet->polyhedron.patchName, "./patches");
     int patchId = patch.dollarZero();
-    libPd.sendFloat(std::to_string(patchId) + "-x-axis", 0);
-    libPd.sendFloat(std::to_string(patchId) + "-y-axis", volume);
     PlanetPatch planetPatch;
     planetPatch.planet = planet;
     planetPatch.patchId = patchId;
@@ -85,11 +83,7 @@ void PdPatchMixer::update(Vector3 cameraPosition) {
             volume = -1;
         }
         libPd.sendFloat(
-            std::to_string(planetPatch.patchId) + "-x-axis",
-            0
-        );
-        libPd.sendFloat(
-            std::to_string(planetPatch.patchId) + "-y-axis",
+            std::to_string(planetPatch.patchId) + "-proximity",
             volume
         );
     }
