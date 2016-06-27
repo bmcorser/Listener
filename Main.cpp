@@ -139,7 +139,7 @@ public:
         // random parts
 
 
-        for (unsigned i = 0; i < 5; i += 1)
+        for (unsigned i = 0; i < 20; i += 1)
         {
             int polyhedron_id = uni(rng);
             int scale = scale_dist(rng);

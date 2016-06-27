@@ -60,8 +60,10 @@ void PdPatchMixer::init (int sampleRate, unsigned int bufferFrames) {
 }
 
 void PdPatchMixer::addPlanet(PlanetComponent* planet) {
-    Patch patch = libPd.openPatch(planet->polyhedron.patchName, "./patches");
+    Patch patch = libPd.openPatch("patch.pd", "./");
     int patchId = patch.dollarZero();
+    libPd.sendFloat(std::to_string(patchId) + "-x-axis", 0);
+    libPd.sendFloat(std::to_string(patchId) + "-y-axis", volume);
     PlanetPatch planetPatch;
     planetPatch.planet = planet;
     planetPatch.patchId = patchId;
@@ -83,8 +85,11 @@ void PdPatchMixer::update(Vector3 cameraPosition) {
             volume = -1;
         }
         libPd.sendFloat(
-            std::to_string(planetPatch.patchId) + "-proximity",
-            volume
+            std::to_string(planetPatch.patchId) + "-x-axis",
+            0
+        );
+        libPd.sendFloat(
+            std::to_string(planetPatch.patchId) + "-y-axis",
         );
     }
 }
