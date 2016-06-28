@@ -67,7 +67,7 @@ public:
         engineParameters_["WindowHeight"] = 480;
         */
         // engineParameters_["WindowResizable"] = true;
-        // engineParameters_["HighDPI"] = true;
+        engineParameters_["HighDPI"] = true;
     }
 
     virtual void Start()
@@ -111,15 +111,16 @@ public:
         cameraNode_ = orbitalCamera->cameraNode;
         orbitalCamera->SetTargetPos(Vector3(0, 0, 0));
 
-        Renderer* renderer = GetSubsystem<Renderer>();
-        renderer->DrawDebugGeometry(true);
+        /*
         cameraNode_ = scene_->CreateChild("Camera");
         Camera* debugCamera = cameraNode_->CreateComponent<Camera>();
         debugCamera->SetFarClip(2000);
         SharedPtr<Viewport> viewport(new Viewport(context_, scene_, debugCamera));
-        /*
-        SharedPtr<Viewport> viewport(new Viewport(context_, scene_, orbitalCamera->camera));
         */
+        SharedPtr<Viewport> viewport(new Viewport(context_, scene_, orbitalCamera->camera));
+
+        Renderer* renderer = GetSubsystem<Renderer>();
+        renderer->DrawDebugGeometry(true);
         renderer->SetViewport(0,viewport);
 
         SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ListenerApp, HandleKeyDown));
@@ -174,7 +175,7 @@ public:
     void HandleUpdate(StringHash eventType,VariantMap& eventData)
     {
         pdPatchMixer.update(cameraNode_->GetWorldPosition());
-        DebugHandleUpdate(eventType, eventData);
+        // DebugHandleUpdate(eventType, eventData);
     }
 
     void DebugHandleUpdate(StringHash eventType,VariantMap& eventData)

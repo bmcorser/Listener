@@ -28,7 +28,7 @@ void OrbitalCamera::Start()
     maxRadius = 20;
     currentPitch = 30;
     currentYaw = 40;
-    radius = 50;
+    radius = 10;
     target = Vector3::ZERO;
 
     containerNode = node->CreateChild("OrbitalCameraContainer");

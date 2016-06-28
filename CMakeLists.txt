@@ -1,5 +1,5 @@
 set(CMAKE_CXX_STANDARD "11")
-# set(CMAKE_CXXFLAGS "-std=c++11")
+set(CMAKE_CXXFLAGS "-fsanitize=address")
 
 include(ExternalProject)
 # Set CMake minimum version and CMake policy required by Urho3D-CMake-common module
